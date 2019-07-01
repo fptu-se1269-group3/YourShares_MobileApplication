@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, ScrollView, StyleSheet} from 'react-native';
-import strings from "../res/Strings";
+import strings from "../values/Strings";
 
 export default class ProfileScreen extends Component {
     render() {

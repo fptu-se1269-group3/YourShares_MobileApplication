@@ -3,7 +3,6 @@ import React, {Component} from 'react';
 import {SearchBar} from 'react-native-elements'
 import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
-import {Card} from "react-native-elements";
 
 import {
     Image,
@@ -83,23 +82,13 @@ function DevelopmentModeNotice() {
 }
 
 function Token() {
-    SecureStore.getItemAsync('email').then((result)=>{
-        console.log(result);
-        return(
+    SecureStore.getItemAsync('jwt')
+        .then(result => console.log(`jwt: ${result}`))
+        .catch(error => console.log(error));
 
-            <Text>
-                Token: {result}
-            </Text>
-        );
-    }).catch((error)=>{
-        console.log(error);
-        return (
-            <Text>
-                Can't take token
-            </Text>
-        )
-    });
-
+    SecureStore.getItemAsync('id')
+        .then(result => console.log(`id: ${result}`))
+        .catch(error => console.log(error));
 }
 
 function handleLearnMorePress() {

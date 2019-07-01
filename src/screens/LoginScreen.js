@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import { Image, StyleSheet, View, Button } from "react-native";
-import strings from '../res/Strings';
-import colors from '../res/Colors';
+import strings from '../values/Strings';
+import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
 import Base64 from "Base64";
@@ -38,7 +38,7 @@ class LoginScreen extends Component<{}, State> {
             'Authorization': `Basic ${cred}`
           },
         }).then((response) => {
-            if(response.status==200){
+            if(response.status===200){
                 return response.json();
             }else{
                 throw Error;
@@ -46,16 +46,11 @@ class LoginScreen extends Component<{}, State> {
 
         })
         .then((responseJson) => {
-            SecureStore.setItemAsync('jwt', responseJson.jwt, {
-                keychainAccessible: SecureStore.ALWAYS
-            });
-            SecureStore.setItemAsync('userId', responseJson.userId, {
-                keychainAccessible: SecureStore.ALWAYS
-            });
-
+            saveLogin(responseJson.jwt, responseJson.userId)
             this.props.navigation.navigate( 'Main');
         })
         .catch((error) => {
+            console.log(error);
           alert('Wrong email or password!!!');
         });
         
@@ -82,6 +77,15 @@ class LoginScreen extends Component<{}, State> {
             </View>
         );
     }
+}
+
+function saveLogin(jwt, id) {
+    SecureStore.setItemAsync('jwt', jwt, {
+        keychainAccessible: SecureStore.ALWAYS
+    });
+    SecureStore.setItemAsync('id', id, {
+        keychainAccessible: SecureStore.ALWAYS
+    });
 }
 
 const styles = StyleSheet.create({

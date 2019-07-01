@@ -1,7 +1,7 @@
 import React from 'react';
 import {Ionicons, MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 
-import colors from '../res/Colors';
+import colors from '../values/Colors';
 
 export default function TabBarIcon(props) {
     switch (props.type) {
