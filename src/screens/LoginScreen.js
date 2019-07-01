@@ -1,10 +1,9 @@
 import React, {Component} from "react";
 import { Image, StyleSheet, View, Button } from "react-native";
-import strings from '../res/Strings'
-import colors from '../res/Colors'
+import strings from '../values/Strings'
+import colors from '../values/Colors'
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
-
 interface State {
     email: string;
     password: string;
@@ -57,6 +56,15 @@ class LoginScreen extends Component<{}, State> {
             </View>
         );
     }
+}
+
+function saveLogin(jwt, id) {
+    SecureStore.setItemAsync('jwt', jwt, {
+        keychainAccessible: SecureStore.ALWAYS
+    });
+    SecureStore.setItemAsync('id', id, {
+        keychainAccessible: SecureStore.ALWAYS
+    });
 }
 
 const styles = StyleSheet.create({
