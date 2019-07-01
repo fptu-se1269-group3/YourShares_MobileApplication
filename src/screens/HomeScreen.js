@@ -1,19 +1,21 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, {Component} from 'react';
-import {SearchBar} from 'react-native-elements'
-import {SafeAreaView} from "react-navigation";
+import React, { Component } from 'react';
+import { SearchBar, ListItem, Icon } from 'react-native-elements'
+import { SafeAreaView } from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
+import { Container, Header, Content, Card, CardItem, Text, Body } from "native-base";
+import * as Icons from "@expo/vector-icons";
 
 import {
     Image,
     Platform,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
-    Button
+    Button,
 } from 'react-native';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 
 export default class HomeScreen extends Component {
@@ -21,33 +23,91 @@ export default class HomeScreen extends Component {
         super(props);
         this.state = {
             search: '',
+            jwt: '',
         };
-        Token();
     }
 
+    componentDidMount() {
+        getTokenAsyn()
+            .then(jwt => {
+                this.setState({jwt}); 
+                console.log(this.state.jwt);
+            });
+    }
+
+    search(search){
+        fetch('http://api.yourshares.tk/api/companies?CompanyName=' + search, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.state.jwt}`
+          },
+
+        }).then((response) => response.json())
+        .then((responseJson) => {
+        this.setState({
+           count: responseJson.count,
+           data: responseJson['data'],
+        })
+
+        })
+        .catch((error) => {
+            //alert(error);
+        });
+
+    }
+    renderCard = () => {
+        const card = [];
+        for (let i = 0; i < this.state.count; i++) {
+            card.push(
+                <TouchableOpacity key={this.state.data[i].companyId} onPress={()=>alert(this.state.data[i].companyId)}>
+                <Card style={{ borderRadius: 10 }}>
+                    <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
+                        <Text>{this.state.data[i].companyName}</Text>
+                    </CardItem>
+                    <CardItem bordered>
+                        <Body>
+                            <Text>
+                                NativeBase is a free and open source framework that enable
+                      developers to build
+                      high-quality mobile apps using React Native iOS and Android
+                      apps
+                      with a fusion of ES6.
+                            </Text>
+                        </Body>
+                    </CardItem>
+                    <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                        <Body>
+                            <Text>
+                                <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                            </Text>
+                            <Text>
+                                <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                            </Text>
+                        </Body>
+                    </CardItem>
+                </Card>
+                </TouchableOpacity>
+            )
+        }
+        return card;
+
+    }
     render() {
         return (
             <SafeAreaView style={styles.container}>
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
                     placeholder="Search company ..."
-                    onChangeText={(search) => this.setState({search})}
+                    onChangeText={(search) => this.setState({ search })}
                     value={this.state.search}
+                    onTouchEnd={this.search(this.state.search)}
                 />
                 <ScrollView
                     style={styles.container}
                     contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.welcomeContainer}>
-                        <Image
-                            source={
-                                __DEV__
-                                    ? require('../assets/images/robot-dev.png')
-                                    : require('../assets/images/robot-prod.png')
-                            }
-                            style={styles.welcomeImage}
-                        />
-                    </View>
-                    {/*<Token/>*/}
+                    {this.renderCard()}
                 </ScrollView>
             </SafeAreaView>
         );
@@ -58,51 +118,15 @@ HomeScreen.navigationOptions = {
     header: null,
 };
 
-function DevelopmentModeNotice() {
-    if (__DEV__) {
-        const learnMoreButton = (
-            <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-                Learn more
-            </Text>
-        );
-
-        return (
-            <Text style={styles.developmentModeText}>
-                Development mode is enabled: your app will be slower but you can use
-                useful development tools. {learnMoreButton}
-            </Text>
-        );
-    } else {
-        return (
-            <Text style={styles.developmentModeText}>
-                You are not in development mode: your app will run at full speed.
-            </Text>
-        );
-    }
-}
-
-function Token() {
-    SecureStore.getItemAsync('jwt')
-        .then(result => console.log(`jwt: ${result}`))
+function getTokenAsyn() {
+    return SecureStore.getItemAsync('jwt')
+        .then(jwt => { return jwt })
         .catch(error => console.log(error));
 
-    SecureStore.getItemAsync('id')
-        .then(result => console.log(`id: ${result}`))
-        .catch(error => console.log(error));
+    // SecureStore.getItemAsync('id')
+    //     .then(result => this.setState({ userId: { result } }))
+    //     .catch(error => console.log(error));
 }
-
-function handleLearnMorePress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/development-mode/'
-    );
-}
-
-function handleHelpPress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-    );
-}
-
 
 const styles = StyleSheet.create({
     container: {
@@ -118,7 +142,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     contentContainer: {
-        paddingTop: 30,
     },
     welcomeContainer: {
         alignItems: 'center',
@@ -161,7 +184,7 @@ const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 shadowColor: 'black',
-                shadowOffset: {width: 0, height: -3},
+                shadowOffset: { width: 0, height: -3 },
                 shadowOpacity: 0.1,
                 shadowRadius: 3,
             },

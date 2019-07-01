@@ -46,7 +46,8 @@ class LoginScreen extends Component<{}, State> {
 
         })
         .then((responseJson) => {
-            saveLogin(responseJson.jwt, responseJson.userId)
+            saveLogin(responseJson.jwt, responseJson.userId);
+            console.log(responseJson);
             this.props.navigation.navigate( 'Main');
         })
         .catch((error) => {
