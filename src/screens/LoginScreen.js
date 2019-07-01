@@ -1,9 +1,11 @@
 import React, {Component} from "react";
 import { Image, StyleSheet, View, Button } from "react-native";
-import strings from '../res/Strings'
-import colors from '../res/Colors'
+import strings from '../res/Strings';
+import colors from '../res/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
+import Base64 from "Base64";
+import {KeyboardAvoidingView} from 'react-native';
 
 interface State {
     email: string;
@@ -27,20 +29,43 @@ class LoginScreen extends Component<{}, State> {
         console.log("Login button pressed");
         const email = this.state.email;
         const password = this.state.password;
-        SecureStore.setItemAsync('email', email, {
-            keychainAccessible: SecureStore.ALWAYS
+        const cred = Base64.btoa(`${email}:${password}`)
+        fetch('http://api.yourshares.tk/auth', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${cred}`
+          },
+        }).then((response) => {
+            if(response.status==200){
+                return response.json();
+            }else{
+                throw Error;
+            }
+
+        })
+        .then((responseJson) => {
+            SecureStore.setItemAsync('jwt', responseJson.jwt, {
+                keychainAccessible: SecureStore.ALWAYS
+            });
+            SecureStore.setItemAsync('userId', responseJson.userId, {
+                keychainAccessible: SecureStore.ALWAYS
+            });
+
+            this.props.navigation.navigate( 'Main');
+        })
+        .catch((error) => {
+          alert('Wrong email or password!!!');
         });
-        SecureStore.setItemAsync('password', password, {
-            keychainAccessible: SecureStore.ALWAYS
-        });
-        this.props.navigation.navigate( 'Main');
+        
     };
 
     render() {
         return (
             <View style={styles.container}>
                 <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-                <View style={styles.form}>
+                <KeyboardAvoidingView style={styles.form} behavior="padding" enabled>
                     <FormTextInput
                         value={this.state.email}
                         onChangeText={(email) => this.setState({email})}
@@ -53,7 +78,7 @@ class LoginScreen extends Component<{}, State> {
                         secureTextEntry={true}
                     />
                     <Button title={strings.LOGIN} onPress={this.handleLoginPress} />
-                </View>
+                </KeyboardAvoidingView>
             </View>
         );
     }
