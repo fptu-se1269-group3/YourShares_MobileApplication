@@ -12,10 +12,9 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    View,
     Button,
+    View,
 } from 'react-native';
-import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 
 export default class HomeScreen extends Component {
@@ -94,7 +93,7 @@ export default class HomeScreen extends Component {
         }
         return card;
 
-    }
+    };
     render() {
         return (
             <SafeAreaView style={styles.container}>

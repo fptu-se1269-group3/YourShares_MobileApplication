@@ -13,5 +13,5 @@ export default class TransactionsScreen extends Component{
 
 
 TransactionsScreen.navigationOptions = {
-    headerMode: 'none'
+    title: 'Transactions'
 };
