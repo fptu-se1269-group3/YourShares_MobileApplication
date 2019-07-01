@@ -30,64 +30,65 @@ export default class HomeScreen extends Component {
     componentDidMount() {
         getTokenAsyn()
             .then(jwt => {
-                this.setState({jwt}); 
+                this.setState({ jwt });
                 console.log(this.state.jwt);
+                this.search('');
             });
     }
 
-    search(search){
+    search(search) {
         fetch('http://api.yourshares.tk/api/companies?CompanyName=' + search, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.state.jwt}`
-          },
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.jwt}`
+            },
 
         }).then((response) => response.json())
-        .then((responseJson) => {
-        this.setState({
-           count: responseJson.count,
-           data: responseJson['data'],
-        })
+            .then((responseJson) => {
+                this.setState({
+                    count: responseJson.count,
+                    data: responseJson['data'],
+                })
 
-        })
-        .catch((error) => {
-            //alert(error);
-        });
+            })
+            .catch((error) => {
+                //alert(error);
+            });
 
     }
     renderCard = () => {
         const card = [];
         for (let i = 0; i < this.state.count; i++) {
             card.push(
-                <TouchableOpacity key={this.state.data[i].companyId} onPress={()=>alert(this.state.data[i].companyId)}>
-                <Card style={{ borderRadius: 10 }}>
-                    <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                        <Text>{this.state.data[i].companyName}</Text>
-                    </CardItem>
-                    <CardItem bordered>
-                        <Body>
-                            <Text>
-                                NativeBase is a free and open source framework that enable
-                      developers to build
-                      high-quality mobile apps using React Native iOS and Android
-                      apps
-                      with a fusion of ES6.
+                <TouchableOpacity key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)}>
+                    <Card style={{ borderRadius: 10 }}>
+                        <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
+                            <Text>{this.state.data[i].companyName}</Text>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Body>
+                                <Text>
+                                    NativeBase is a free and open source framework that enable
+                          developers to build
+                          high-quality mobile apps using React Native iOS and Android
+                          apps
+                          with a fusion of ES6.
                             </Text>
-                        </Body>
-                    </CardItem>
-                    <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                        <Body>
-                            <Text>
-                                <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
-                            </Text>
-                            <Text>
-                                <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
-                            </Text>
-                        </Body>
-                    </CardItem>
-                </Card>
+                            </Body>
+                        </CardItem>
+                        <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                            <Body>
+                                <Text>
+                                    <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                                </Text>
+                                <Text>
+                                    <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                                </Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
                 </TouchableOpacity>
             )
         }
@@ -100,9 +101,11 @@ export default class HomeScreen extends Component {
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
                     placeholder="Search company ..."
-                    onChangeText={(search) => this.setState({ search })}
+                    onChangeText={(search) => {
+                        this.setState({search})
+                        this.search(search)
+                        }}
                     value={this.state.search}
-                    onTouchEnd={this.search(this.state.search)}
                 />
                 <ScrollView
                     style={styles.container}
