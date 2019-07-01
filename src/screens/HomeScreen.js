@@ -10,9 +10,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
-    Button
 } from 'react-native';
 
 

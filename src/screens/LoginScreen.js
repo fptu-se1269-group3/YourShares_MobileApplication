@@ -1,11 +1,12 @@
 import React, {Component} from "react";
-import { Image, StyleSheet, View, Button } from "react-native";
+import { Image, StyleSheet, View, Button, Text } from "react-native";
 import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
 import Base64 from "Base64";
 import {KeyboardAvoidingView} from 'react-native';
+import {Button as NBButton} from "native-base";
 
 interface State {
     email: string;
@@ -72,8 +73,12 @@ class LoginScreen extends Component<{}, State> {
                         placeholder={strings.PASSWORD_PLACEHOLDER}
                         secureTextEntry={true}
                     />
-                    <Button title={strings.LOGIN} onPress={this.handleLoginPress} />
+                    <Button title={strings.LOGIN} onPress={this.handleLoginPress}/>
+                    <NBButton Danger onPress={() => this.props.navigation.navigate('Main')}>
+                        <Text>[DEV] Take me in</Text>
+                    </NBButton>
                 </KeyboardAvoidingView>
+
             </View>
         );
     }
