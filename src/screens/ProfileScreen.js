@@ -2,29 +2,19 @@ import React, {Component} from 'react';
 import {Button, ScrollView, StyleSheet, View, Switch, Platform} from 'react-native';
 import strings from "../values/Strings";
 import {Avatar, ListItem, Text} from "react-native-elements";
-import PropTypes from 'prop-types';
 import InfoText from '../components/InfoText'
+import BaseIcon from '../components/BaseIcon'
+import Chevron from '../components/Chevron'
 import {SafeAreaView} from "react-navigation";
 
 export default class ProfileScreen extends Component {
-
-    static propTypes = {
-        avatar: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        navigation: PropTypes.object.isRequired,
-        emails: PropTypes.arrayOf(
-            PropTypes.shape({
-                email: PropTypes.string.isRequired,
-            })
-        ).isRequired,
-    };
 
     state = {
         pushNotifications: true,
     };
 
     onPressOptions = () => {
-        this.props.navigation.navigate('options')
+        alert('Pressed');
     };
 
     onChangePushNotifications = () => {
@@ -71,17 +61,17 @@ export default class ProfileScreen extends Component {
                                     value={this.state.pushNotifications}
                                 />
                             }
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{
-                            //             backgroundColor: '#FFADF2',
-                            //         }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'notifications',
-                            //         }}
-                            //     />
-                            // }
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{
+                                        backgroundColor: '#FFADF2',
+                                    }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'notifications',
+                                    }}
+                                />
+                            }
                         />
                         <ListItem
                             title="Currency"
@@ -89,16 +79,16 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#FAD291' }}
-                            //         icon={{
-                            //             type: 'font-awesome',
-                            //             name: 'money',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#FAD291' }}
+                                    icon={{
+                                        type: 'font-awesome',
+                                        name: 'money',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron />}
                         />
                         <ListItem
                             title="Location"
@@ -106,16 +96,16 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#57DCE7' }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'place',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'place',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron />}
                         />
                         <ListItem
                             title="Language"
@@ -123,22 +113,25 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#FEA8A1' }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'language',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#FEA8A1' }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'language',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron />}
                         />
                     </View>
-                    <Button
-                        title={strings.LOGOUT}
-                        onPress={() => this.props.navigation.navigate('Auth')}
-                    />
+                    <InfoText text={"Settings"}/>
+                    <View style={styles.button} >
+                        <Button
+                            title={strings.LOGOUT}
+                            onPress={() => this.props.navigation.navigate('Auth')}
+                        />
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         );
@@ -153,15 +146,15 @@ ProfileScreen.headerMode = 'none';
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: (Platform.OS === 'ios') ? 0 : 22,
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff'
     },
     scroll: {
-        backgroundColor: 'white',
+        backgroundColor: "#F4F5F4",
         flex: 1
     },
     userRow: {
+        backgroundColor: "#ffffff",
         alignItems: 'center',
         flexDirection: 'row',
         paddingBottom: 8,
@@ -176,5 +169,11 @@ const styles = StyleSheet.create({
         height: 55,
         borderWidth: 0.5,
         borderColor: '#ECECEC',
+    },
+    button: {
+        marginTop: 12,
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
     }
 });

@@ -12,6 +12,7 @@ export default {
   noticeBackground: tintColor,
   noticeText: '#fff',
   BLACK: "#000",
+  LIGHT_GREY: "#D1D1D6",
   WHITE: "#FFF",
   DODGER_BLUE: "#428AF8",
   SILVER: "#BEBEBE",
