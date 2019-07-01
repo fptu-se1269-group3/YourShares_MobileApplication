@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "latest",
+    "Base64": "^1.0.2",
     "expo": "^33.0.0",
     "expo-app-auth": "^5.0.1",
     "expo-asset": "latest",
