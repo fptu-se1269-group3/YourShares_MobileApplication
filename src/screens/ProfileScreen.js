@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button, ScrollView, StyleSheet, View, Switch, Platform } from 'react-native';
 import strings from "../values/Strings";
 import { Avatar, ListItem, Text } from "react-native-elements";
-import PropTypes from 'prop-types';
 import InfoText from '../components/InfoText'
 import { SafeAreaView } from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
@@ -10,11 +9,6 @@ import BaseIcon from '../components/BaseIcon'
 import Chevron from '../components/Chevron'
 
 export default class ProfileScreen extends Component {
-
-    static propTypes = {
-        navigation: PropTypes.object.isRequired,
-    };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -28,6 +22,10 @@ export default class ProfileScreen extends Component {
         };
     }
 
+    static navigationOptions = {
+        title: "Profile"
+    };
+
     componentDidMount() {
         this.getTokenAsyn()
             .then(jwt => {
@@ -35,7 +33,7 @@ export default class ProfileScreen extends Component {
             });
         this.getUserIdAsyn()
             .then(userId => {
-                this.setState({ userId })
+                this.setState({ userId });
                 console.log(this.state.userId);
                 this.callApi();
             })
@@ -194,12 +192,6 @@ export default class ProfileScreen extends Component {
         );
     }
 }
-
-ProfileScreen.navigationOptions = {
-    title: 'User profile',
-};
-
-ProfileScreen.headerMode = 'none';
 
 const styles = StyleSheet.create({
     container: {

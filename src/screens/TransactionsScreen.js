@@ -5,6 +5,9 @@ import { Button, ScrollView, StyleSheet, View, Switch, Platform } from 'react-na
 import InfoText from '../components/InfoText'
 
 export default class TransactionsScreen extends Component{
+    static navigationOptions = {
+        title: "Transactions"
+    };
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -33,11 +36,6 @@ export default class TransactionsScreen extends Component{
         );
     }
 }
-
-
-TransactionsScreen.navigationOptions = {
-    title: 'Transactions'
-};
 
 const styles = StyleSheet.create({
     container: {

@@ -7,10 +7,19 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import TransactionsScreen from "../screens/TransactionsScreen";
+import colors from "../values/Colors";
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
-    default: {},
+    default: {
+        defaultNavigationOptions: {
+            headerTintColor: '#fff',
+            headerStyle: {
+                backgroundColor: colors.HEADER_LIGHT_BLUE
+
+            },
+        }
+    },
 });
 
 const HomeStack = createStackNavigator(
@@ -22,6 +31,7 @@ const HomeStack = createStackNavigator(
 
 HomeStack.navigationOptions = {
     tabBarLabel: 'Home',
+    header: null,
     tabBarIcon: ({focused}) => (
         <TabBarIcon
             type={'ionic'}
@@ -75,29 +85,33 @@ SettingsStack.navigationOptions = {
     ),
 };
 
-const TransactionStack = createStackNavigator(
+const TransactionsStack = createStackNavigator(
     {
         Transactions: TransactionsScreen
-    }, {
-        navigationOptions: {
-            tabBarLabel: 'Transactions',
-            tabBarIcon: ({focused}) => (
-                <TabBarIcon
-                    type={'materialcom'}
-                    focused={focused}
-                    name={'bank-transfer'}/>
-            )
-        }
-    }
+    },
+    config
 );
+
+TransactionsStack.navigationOptions = {
+    tabBarLabel: 'Transactions',
+    tabBarIcon: ({focused}) => (
+        <TabBarIcon
+            type={'materialcom'}
+            focused={focused}
+            name={'bank-transfer'}/>
+    )
+};
 
 // SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
-    HomeStack,
-    TransactionStack,
-    ProfileStack,
-    SettingsStack,
+    Home: HomeStack,
+    Transactions: TransactionsStack,
+    Profile: ProfileStack,
+    Settings: SettingsStack,
+}, {
+    resetOnBlur: true,
+    initialRouteName: 'Home'
 });
 
 // tabNavigator.path = '';

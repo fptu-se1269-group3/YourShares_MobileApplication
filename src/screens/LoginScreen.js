@@ -5,7 +5,7 @@ import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
 import Base64 from "Base64";
-import {KeyboardAvoidingView} from 'react-native';
+import {KeyboardAvoidingView, StatusBar} from 'react-native';
 
 interface State {
     email: string;
@@ -29,7 +29,7 @@ class LoginScreen extends Component<{}, State> {
         console.log("Login button pressed");
         const email = this.state.email;
         const password = this.state.password;
-        const credentials = Base64.btoa(`${email}:${password}`)
+        const credentials = Base64.btoa(`${email}:${password}`);
         fetch('http://api.yourshares.tk/auth', {
             method: 'GET',
             headers: {
@@ -59,6 +59,7 @@ class LoginScreen extends Component<{}, State> {
     render() {
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true}/>
                 <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
                 <KeyboardAvoidingView style={styles.form} behavior="padding" enabled>
                     <FormTextInput
@@ -73,7 +74,6 @@ class LoginScreen extends Component<{}, State> {
                         secureTextEntry={true}
                     />
                     <Button title={strings.LOGIN} onPress={this.handleLoginPress}/>
-
                     {
                         __DEV__
                             ?
