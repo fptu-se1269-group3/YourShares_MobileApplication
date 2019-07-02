@@ -2,15 +2,18 @@ import React, { Component } from "react";
 import { ListItem, Text } from "react-native-elements";
 import { SafeAreaView } from "react-navigation";
 import { ScrollView, StyleSheet, View, Platform } from 'react-native';
-import { Icon, Picker } from "native-base";
-
+import { Icon, Picker, Header, Tab, Tabs, TabHeading } from "native-base";
 import DatePicker from 'react-native-datepicker';
+import Tab1 from './SettingsScreen';
+import Tab2 from './SettingsScreen';
+import Tab3 from './SettingsScreen';
 
 export default class TransactionsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selected: "key1",
+            date2:`${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}"`
         };
     }
     render() {
@@ -27,9 +30,11 @@ export default class TransactionsScreen extends Component {
                                     mode="date" //The enum of date, datetime and time
                                     placeholder="From date"
                                     format="DD-MM-YYYY"
-                                    minDate="01-01-2016"
-                                    maxDate="01-01-2019"
+                                    maxDate={this.state.date2}
                                     showIcon={true}
+                                    iconComponent={
+                                        <Icon name="arrow-down" style={{ fontSize: 24, marginRight: 20 }} />
+                                    }
                                     confirmBtnText="Confirm"
                                     cancelBtnText="Cancel"
                                     onDateChange={(date) => { this.setState({ date: date }) }}
@@ -43,20 +48,22 @@ export default class TransactionsScreen extends Component {
                             <Text style={{ position: 'relative', bottom: -10 }}> To: </Text>
                             <View>
                                 <DatePicker
-                                    style={{ alignSelf: 'flex-end'}}
-                                    date={this.state.date} //initial date from state
+                                    style={{ alignSelf: 'flex-end' }}
+                                    date={this.state.date2} //initial date from state
                                     mode="date" //The enum of date, datetime and time
                                     placeholder="To date"
                                     format="DD-MM-YYYY"
-                                    minDate="01-01-2016"
-                                    maxDate="01-01-2019"
+                                    minDate={this.state.date}
                                     confirmBtnText="Confirm"
                                     cancelBtnText="Cancel"
                                     showIcon={true}
-                                    onDateChange={(date) => { this.setState({ date: date }) }}
+                                    iconComponent={
+                                        <Icon name="arrow-down" style={{ fontSize: 24, marginRight: 20 }} />
+                                    }
+                                    onDateChange={(date2) => { this.setState({ date2: date2 }) }}
                                     customStyles={{
                                         dateInput: {
-                                            borderColor: 'white'
+                                            borderColor: 'white',
                                         }
                                     }}
                                 />
@@ -84,6 +91,23 @@ export default class TransactionsScreen extends Component {
                             rightTitleStyle={{ fontSize: 15, width: '100%', textAlign: 'right' }}
                             containerStyle={styles.listItemContainer}
                         />
+                        <Tabs>
+                            <Tab heading={<TabHeading>
+                                <Icon name="arrow-round-up" style={{ color: 'red' }} />
+                                <Icon name="arrow-round-down" style={{ color: 'green' }} />
+                                <Text> All</Text>
+                            </TabHeading>}>
+                                <Tab1 />
+                            </Tab>
+                            <Tab heading={<TabHeading><Icon name="arrow-round-down" style={{ color: 'green' }} />
+                                <Text>In</Text>
+                            </TabHeading>}>
+                                <Tab2 />
+                            </Tab>
+                            <Tab heading={<TabHeading><Icon name="arrow-round-up" style={{ color: 'red' }} /><Text>Out</Text></TabHeading>}>
+                                <Tab3 />
+                            </Tab>
+                        </Tabs>
                     </View>
                 </ScrollView>
             </SafeAreaView>
