@@ -110,7 +110,6 @@ const tabNavigator = createBottomTabNavigator({
     Profile: ProfileStack,
     Settings: SettingsStack,
 }, {
-    resetOnBlur: true,
     initialRouteName: 'Home'
 });
 

@@ -5,7 +5,7 @@ export default function InfoText(props) {
     const {text} = props;
     return (
         <View style={styles.container}>
-            <Text style={styles.infoText}>{props.text}</Text>
+            <Text style={styles.infoText}>{text}</Text>
         </View>
     );
 }

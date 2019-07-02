@@ -3,7 +3,7 @@ import {View, Text} from "react-native";
 
 export default class SettingsScreen extends Component{
     static navigationOptions = {
-        title: "Settingsc"
+        title: "Settings"
     };
     render() {
         return (
