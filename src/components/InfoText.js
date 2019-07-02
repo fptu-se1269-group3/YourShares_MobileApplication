@@ -14,15 +14,15 @@ const styles = StyleSheet.create({
         color: 'gray',
         fontWeight: '500',
     },
-})
+});
 const InfoText = ({ text }) => (
     <View style={styles.container}>
         <Text style={styles.infoText}>{text}</Text>
     </View>
-)
+);
 
 InfoText.propTypes = {
     text: PropTypes.string.isRequired,
-}
+};
 
 export default InfoText

@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import InfoText from '../components/InfoText'
 import { SafeAreaView } from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
+import BaseIcon from '../components/BaseIcon'
+import Chevron from '../components/Chevron'
 
 export default class ProfileScreen extends Component {
 
@@ -25,10 +27,6 @@ export default class ProfileScreen extends Component {
             address: ''
         };
     }
-
-    state = {
-        pushNotifications: true,
-    };
 
     componentDidMount() {
         this.getTokenAsyn()
@@ -77,7 +75,7 @@ export default class ProfileScreen extends Component {
     }
 
     onPressOptions = () => {
-        this.props.navigation.navigate('options')
+        alert('Pressed');
     };
 
     onChangePushNotifications = () => {
@@ -120,16 +118,17 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{ fontSize: 15 }}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                        // leftIcon={
-                        //     <BaseIcon
-                        //         containerStyle={{ backgroundColor: '#FAD291' }}
-                        //         icon={{
-                        //             type: 'font-awesome',
-                        //             name: 'money',
-                        //         }}
-                        //     />
-                        // }
-                        // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{
+                                        backgroundColor: '#FFADF2',
+                                    }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'notifications',
+                                    }}
+                                />
+                            }
                         />
                         <ListItem
                             title="Name"
@@ -137,16 +136,16 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{ fontSize: 15 }}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                        // leftIcon={
-                        //     <BaseIcon
-                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
-                        //         icon={{
-                        //             type: 'material',
-                        //             name: 'place',
-                        //         }}
-                        //     />
-                        // }
-                        // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#FAD291' }}
+                                    icon={{
+                                        type: 'font-awesome',
+                                        name: 'money',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron />}
                         />
                         <ListItem
                             title="Address"
@@ -154,16 +153,16 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{ fontSize: 15 }}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                        // leftIcon={
-                        //     <BaseIcon
-                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
-                        //         icon={{
-                        //             type: 'material',
-                        //             name: 'place',
-                        //         }}
-                        //     />
-                        // }
-                        // rightIcon={<Chevron />}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'place',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron />}
                         />
                         <ListItem
                             title="Phone"
@@ -171,47 +170,25 @@ export default class ProfileScreen extends Component {
                             rightTitleStyle={{ fontSize: 15 }}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
-                        // leftIcon={
-                        //     <BaseIcon
-                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
-                        //         icon={{
-                        //             type: 'material',
-                        //             name: 'place',
-                        //         }}
-                        //     />
-                        // }
-                        // rightIcon={<Chevron />}
-                        />
-                    </View>
-                    <InfoText text="Setting" />
-                    <View>
-                    <ListItem
-                            hideChevron
-                            title="Push Notifications"
-                            containerStyle={styles.listItemContainer}
-                            rightElement={
-                                <Switch
-                                    onValueChange={this.onChangePushNotifications}
-                                    value={this.state.pushNotifications}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#FEA8A1' }}
+                                    icon={{
+                                        type: 'material',
+                                        name: 'language',
+                                    }}
                                 />
                             }
-                        // leftIcon={
-                        //     <BaseIcon
-                        //         containerStyle={{
-                        //             backgroundColor: '#FFADF2',
-                        //         }}
-                        //         icon={{
-                        //             type: 'material',
-                        //             name: 'notifications',
-                        //         }}
-                        //     />
-                        // }
+                            rightIcon={<Chevron />}
                         />
                     </View>
-                    <Button
-                        title={strings.LOGOUT}
-                        onPress={() => this.props.navigation.navigate('Auth')}
-                    />
+                    <InfoText text={"Settings"} />
+                    <View style={styles.button} >
+                        <Button
+                            title={strings.LOGOUT}
+                            onPress={() => this.props.navigation.navigate('Auth')}
+                        />
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         );
@@ -226,15 +203,15 @@ ProfileScreen.headerMode = 'none';
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: (Platform.OS === 'ios') ? 0 : 22,
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff'
     },
     scroll: {
-        backgroundColor: 'white',
+        backgroundColor: "#F4F5F4",
         flex: 1
     },
     userRow: {
+        backgroundColor: "#ffffff",
         alignItems: 'center',
         flexDirection: 'row',
         paddingBottom: 8,
@@ -249,5 +226,11 @@ const styles = StyleSheet.create({
         height: 55,
         borderWidth: 0.5,
         borderColor: '#ECECEC',
+    },
+    button: {
+        marginTop: 12,
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
     }
 });

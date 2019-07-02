@@ -27,12 +27,13 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        getTokenAsyn()
+        SecureStore.getItemAsync('jwt')
+            .then(jwt => { return jwt })
             .then(jwt => {
                 this.setState({ jwt });
-                console.log(this.state.jwt);
                 this.search('');
-            });
+            })
+            .catch(error => console.log(error));
     }
 
     search(search) {
@@ -62,18 +63,14 @@ export default class HomeScreen extends Component {
         for (let i = 0; i < this.state.count; i++) {
             card.push(
                 <TouchableOpacity key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)}>
-                    <Card style={{ borderRadius: 10 }}>
+                    <Card style={{ borderRadius: 10 }} pointerEvents="none">
                         <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
                             <Text>{this.state.data[i].companyName}</Text>
                         </CardItem>
                         <CardItem bordered>
                             <Body>
                                 <Text>
-                                    NativeBase is a free and open source framework that enable
-                          developers to build
-                          high-quality mobile apps using React Native iOS and Android
-                          apps
-                          with a fusion of ES6.
+                                    {this.state.data[i].companyDescription}
                             </Text>
                             </Body>
                         </CardItem>
@@ -119,16 +116,6 @@ export default class HomeScreen extends Component {
 HomeScreen.navigationOptions = {
     header: null,
 };
-
-function getTokenAsyn() {
-    return SecureStore.getItemAsync('jwt')
-        .then(jwt => { return jwt })
-        .catch(error => console.log(error));
-
-    // SecureStore.getItemAsync('id')
-    //     .then(result => this.setState({ userId: { result } }))
-    //     .catch(error => console.log(error));
-}
 
 const styles = StyleSheet.create({
     container: {
