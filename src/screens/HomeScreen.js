@@ -40,7 +40,7 @@ export default class HomeScreen extends Component {
                 this.setState({ jwt });
                 this.search('');
             })
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
     }
 
     search(search) {

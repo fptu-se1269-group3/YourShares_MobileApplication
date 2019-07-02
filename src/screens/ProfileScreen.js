@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Button, ScrollView, StyleSheet, View, Switch, Platform } from 'react-native';
+import React, {Component} from 'react';
+import {Button, ScrollView, StyleSheet, View, Switch, Platform} from 'react-native';
 import strings from "../values/Strings";
-import { Avatar, ListItem, Text } from "react-native-elements";
+import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
-import { SafeAreaView } from "react-navigation";
+import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon'
 import Chevron from '../components/Chevron'
@@ -26,15 +26,15 @@ export default class ProfileScreen extends Component {
         title: "Profile"
     };
 
+    // TODO this cause memory leak, fix this
     componentDidMount() {
-        this.getTokenAsyn()
+        this.getTokenAsync()
             .then(jwt => {
-                this.setState({ jwt });
+                this.setState({jwt});
             });
-        this.getUserIdAsyn()
+        this.getUserIdAsync()
             .then(userId => {
-                this.setState({ userId });
-                console.log(this.state.userId);
+                this.setState({userId});
                 this.callApi();
             })
     }
@@ -61,15 +61,20 @@ export default class ProfileScreen extends Component {
             });
     }
 
-    getTokenAsyn() {
+    getTokenAsync() {
         return SecureStore.getItemAsync('jwt')
-            .then(jwt => { return jwt })
-            .catch(error => console.log(error));
+            .then(jwt => {
+                return jwt
+            })
+            .catch(error => console.error(error));
     }
-    getUserIdAsyn() {
+
+    getUserIdAsync() {
         return SecureStore.getItemAsync('id')
-            .then(userId => { return userId })
-            .catch(error => console.log(error));
+            .then(userId => {
+                return userId
+            })
+            .catch(error => console.error(error));
     }
 
     onPressOptions = () => {
@@ -97,7 +102,7 @@ export default class ProfileScreen extends Component {
                             />
                         </View>
                         <View>
-                            <Text style={{ fontSize: 16 }}>{this.state.name}</Text>
+                            <Text style={{fontSize: 16}}>{this.state.name}</Text>
                             <Text
                                 style={{
                                     color: 'gray',
@@ -108,12 +113,12 @@ export default class ProfileScreen extends Component {
                             </Text>
                         </View>
                     </View>
-                    <InfoText text="Account" />
+                    <InfoText text={"Account"}/>
                     <View>
                         <ListItem
                             title="Email"
                             rightTitle={this.state.email}
-                            rightTitleStyle={{ fontSize: 15 }}
+                            rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
@@ -131,57 +136,57 @@ export default class ProfileScreen extends Component {
                         <ListItem
                             title="Name"
                             rightTitle={this.state.name}
-                            rightTitleStyle={{ fontSize: 15 }}
+                            rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#FAD291' }}
+                                    containerStyle={{backgroundColor: '#FAD291'}}
                                     icon={{
                                         type: 'font-awesome',
                                         name: 'money',
                                     }}
                                 />
                             }
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                         <ListItem
                             title="Address"
                             rightTitle={this.state.address}
-                            rightTitleStyle={{ fontSize: 15 }}
+                            rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    containerStyle={{backgroundColor: '#57DCE7'}}
                                     icon={{
                                         type: 'material',
                                         name: 'place',
                                     }}
                                 />
                             }
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                         <ListItem
                             title="Phone"
                             rightTitle={this.state.phone}
-                            rightTitleStyle={{ fontSize: 15 }}
+                            rightTitleStyle={{fontSize: 15}}
                             onPress={() => this.onPressOptions()}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#FEA8A1' }}
+                                    containerStyle={{backgroundColor: '#FEA8A1'}}
                                     icon={{
                                         type: 'material',
                                         name: 'language',
                                     }}
                                 />
                             }
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                     </View>
-                    <InfoText text={"Settings"} />
-                    <View style={styles.button} >
+                    <InfoText text={"Settings"}/>
+                    <View style={styles.button}>
                         <Button
                             title={strings.LOGOUT}
                             onPress={() => this.props.navigation.navigate('Auth')}

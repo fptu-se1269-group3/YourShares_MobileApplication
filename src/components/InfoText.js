@@ -1,6 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import PropTypes from 'prop-types'
+
+export default function InfoText(props) {
+    const {text} = props;
+    return (
+        <View style={styles.container}>
+            <Text style={styles.infoText}>{props.text}</Text>
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -15,14 +23,4 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 });
-const InfoText = ({ text }) => (
-    <View style={styles.container}>
-        <Text style={styles.infoText}>{text}</Text>
-    </View>
-);
 
-InfoText.propTypes = {
-    text: PropTypes.string.isRequired,
-};
-
-export default InfoText

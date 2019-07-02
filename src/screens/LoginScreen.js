@@ -50,7 +50,7 @@ class LoginScreen extends Component<{}, State> {
                 this.props.navigation.navigate('Main');
             })
             .catch((error) => {
-                console.log(error.message);
+                console.error(error.message);
                 alert('Wrong email or password!!!');
             });
 
