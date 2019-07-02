@@ -1,27 +1,80 @@
-import React, {Component} from 'react';
-import {Button, ScrollView, StyleSheet, View, Switch, Platform} from 'react-native';
+import React, { Component } from 'react';
+import { Button, ScrollView, StyleSheet, View, Switch, Platform } from 'react-native';
 import strings from "../values/Strings";
-import {Avatar, ListItem, Text} from "react-native-elements";
+import { Avatar, ListItem, Text } from "react-native-elements";
 import PropTypes from 'prop-types';
 import InfoText from '../components/InfoText'
-import {SafeAreaView} from "react-navigation";
+import { SafeAreaView } from "react-navigation";
+import * as SecureStore from 'expo-secure-store';
 
 export default class ProfileScreen extends Component {
 
     static propTypes = {
-        avatar: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
         navigation: PropTypes.object.isRequired,
-        emails: PropTypes.arrayOf(
-            PropTypes.shape({
-                email: PropTypes.string.isRequired,
-            })
-        ).isRequired,
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            pushNotifications: true,
+            jwt: '',
+            userId: '',
+            email: '',
+            name: '',
+            phone: '',
+            address: ''
+        };
+    }
 
     state = {
         pushNotifications: true,
     };
+
+    componentDidMount() {
+        this.getTokenAsyn()
+            .then(jwt => {
+                this.setState({ jwt });
+            });
+        this.getUserIdAsyn()
+            .then(userId => {
+                this.setState({ userId })
+                console.log(this.state.userId);
+                this.callApi();
+            })
+    }
+
+    callApi() {
+        fetch(`http://api.yourshares.tk/api/user/${this.state.userId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.jwt}`
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({
+                    email: responseJson['data'].email,
+                    name: responseJson['data'].name,
+                    phone: responseJson['data'].phone,
+                    address: responseJson['data'].address
+                })
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }
+
+    getTokenAsyn() {
+        return SecureStore.getItemAsync('jwt')
+            .then(jwt => { return jwt })
+            .catch(error => console.log(error));
+    }
+    getUserIdAsyn() {
+        return SecureStore.getItemAsync('id')
+            .then(userId => { return userId })
+            .catch(error => console.log(error));
+    }
 
     onPressOptions = () => {
         this.props.navigation.navigate('options')
@@ -48,20 +101,91 @@ export default class ProfileScreen extends Component {
                             />
                         </View>
                         <View>
-                            <Text style={{fontSize: 16}}>Tu Nguyen</Text>
+                            <Text style={{ fontSize: 16 }}>{this.state.name}</Text>
                             <Text
                                 style={{
                                     color: 'gray',
                                     fontSize: 16,
                                 }}
                             >
-                                tunmse63006@fpt.edu.vn
+                                {this.state.email}
                             </Text>
                         </View>
                     </View>
-                    <InfoText text="Account"/>
+                    <InfoText text="Account" />
                     <View>
                         <ListItem
+                            title="Email"
+                            rightTitle={this.state.email}
+                            rightTitleStyle={{ fontSize: 15 }}
+                            onPress={() => this.onPressOptions()}
+                            containerStyle={styles.listItemContainer}
+                        // leftIcon={
+                        //     <BaseIcon
+                        //         containerStyle={{ backgroundColor: '#FAD291' }}
+                        //         icon={{
+                        //             type: 'font-awesome',
+                        //             name: 'money',
+                        //         }}
+                        //     />
+                        // }
+                        // rightIcon={<Chevron />}
+                        />
+                        <ListItem
+                            title="Name"
+                            rightTitle={this.state.name}
+                            rightTitleStyle={{ fontSize: 15 }}
+                            onPress={() => this.onPressOptions()}
+                            containerStyle={styles.listItemContainer}
+                        // leftIcon={
+                        //     <BaseIcon
+                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
+                        //         icon={{
+                        //             type: 'material',
+                        //             name: 'place',
+                        //         }}
+                        //     />
+                        // }
+                        // rightIcon={<Chevron />}
+                        />
+                        <ListItem
+                            title="Address"
+                            rightTitle={this.state.address}
+                            rightTitleStyle={{ fontSize: 15 }}
+                            onPress={() => this.onPressOptions()}
+                            containerStyle={styles.listItemContainer}
+                        // leftIcon={
+                        //     <BaseIcon
+                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
+                        //         icon={{
+                        //             type: 'material',
+                        //             name: 'place',
+                        //         }}
+                        //     />
+                        // }
+                        // rightIcon={<Chevron />}
+                        />
+                        <ListItem
+                            title="Phone"
+                            rightTitle={this.state.phone}
+                            rightTitleStyle={{ fontSize: 15 }}
+                            onPress={() => this.onPressOptions()}
+                            containerStyle={styles.listItemContainer}
+                        // leftIcon={
+                        //     <BaseIcon
+                        //         containerStyle={{ backgroundColor: '#57DCE7' }}
+                        //         icon={{
+                        //             type: 'material',
+                        //             name: 'place',
+                        //         }}
+                        //     />
+                        // }
+                        // rightIcon={<Chevron />}
+                        />
+                    </View>
+                    <InfoText text="Setting" />
+                    <View>
+                    <ListItem
                             hideChevron
                             title="Push Notifications"
                             containerStyle={styles.listItemContainer}
@@ -71,68 +195,17 @@ export default class ProfileScreen extends Component {
                                     value={this.state.pushNotifications}
                                 />
                             }
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{
-                            //             backgroundColor: '#FFADF2',
-                            //         }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'notifications',
-                            //         }}
-                            //     />
-                            // }
-                        />
-                        <ListItem
-                            title="Currency"
-                            rightTitle="USD"
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
-                            containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#FAD291' }}
-                            //         icon={{
-                            //             type: 'font-awesome',
-                            //             name: 'money',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
-                        />
-                        <ListItem
-                            title="Location"
-                            rightTitle="New York"
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
-                            containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#57DCE7' }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'place',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
-                        />
-                        <ListItem
-                            title="Language"
-                            rightTitle="English"
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
-                            containerStyle={styles.listItemContainer}
-                            // leftIcon={
-                            //     <BaseIcon
-                            //         containerStyle={{ backgroundColor: '#FEA8A1' }}
-                            //         icon={{
-                            //             type: 'material',
-                            //             name: 'language',
-                            //         }}
-                            //     />
-                            // }
-                            // rightIcon={<Chevron />}
+                        // leftIcon={
+                        //     <BaseIcon
+                        //         containerStyle={{
+                        //             backgroundColor: '#FFADF2',
+                        //         }}
+                        //         icon={{
+                        //             type: 'material',
+                        //             name: 'notifications',
+                        //         }}
+                        //     />
+                        // }
                         />
                     </View>
                     <Button
