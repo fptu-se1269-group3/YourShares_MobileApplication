@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
-import {Button, ScrollView, StyleSheet, View, Switch, Platform} from 'react-native';
+import React, { Component } from 'react';
+import { Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput } from 'react-native';
 import strings from "../values/Strings";
 import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
 import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
-import BaseIcon from '../components/BaseIcon'
-import Chevron from '../components/Chevron'
+import BaseIcon from '../components/BaseIcon';
+import Chevron from '../components/Chevron';
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -16,7 +16,8 @@ export default class ProfileScreen extends Component {
             jwt: '',
             userId: '',
             email: '',
-            name: '',
+            firstName: '',
+            lastName: '',
             phone: '',
             address: ''
         };
@@ -51,7 +52,32 @@ export default class ProfileScreen extends Component {
             .then((responseJson) => {
                 this.setState({
                     email: responseJson['data'].email,
-                    name: responseJson['data'].name,
+                    firstName: responseJson['data'].firstName,
+                    lastName: responseJson['data'].lastName,
+                    phone: responseJson['data'].phone,
+                    address: responseJson['data'].address
+                })
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }
+
+    editInfo(field, editField) {
+        console.log(field + " " + editField);
+        fetch(`http://api.yourshares.tk/api/users/${field}?value=${editField}`, {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.jwt}`
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({
+                    email: responseJson['data'].email,
+                    firstName: responseJson['data'].firstName,
+                    lastName: responseJson['data'].lastName,
                     phone: responseJson['data'].phone,
                     address: responseJson['data'].address
                 })
@@ -77,10 +103,6 @@ export default class ProfileScreen extends Component {
             .catch(error => console.error(error));
     }
 
-    onPressOptions = () => {
-        alert('Pressed');
-    };
-
     onChangePushNotifications = () => {
         this.setState(state => ({
             pushNotifications: !state.pushNotifications,
@@ -102,7 +124,7 @@ export default class ProfileScreen extends Component {
                             />
                         </View>
                         <View>
-                            <Text style={{fontSize: 16}}>{this.state.name}</Text>
+                            <Text style={{ fontSize: 16 }}>{this.state.firstName} {this.state.lastName}</Text>
                             <Text
                                 style={{
                                     color: 'gray',
@@ -117,9 +139,8 @@ export default class ProfileScreen extends Component {
                     <View>
                         <ListItem
                             title="Email"
-                            rightTitle={this.state.email}
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
+                            rightTitle= {this.state.email}
+                            rightTitleStyle={{ fontSize: 15, width: 220 ,textAlign:'right'}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -127,38 +148,81 @@ export default class ProfileScreen extends Component {
                                         backgroundColor: '#FFADF2',
                                     }}
                                     icon={{
-                                        type: 'material',
-                                        name: 'notifications',
+                                        type: 'Entypo',
+                                        name: 'email',
                                     }}
                                 />
                             }
                         />
                         <ListItem
-                            title="Name"
-                            rightTitle={this.state.name}
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
+                            title="FirstName"
+                            rightTitle={
+                                <TextInput style={{ width: 220, textAlign: 'right' }}
+                                    defaultValue={this.state.firstName}
+                                    onSubmitEditing={(evn) => this.editInfo('firstName', evn.nativeEvent.text)}
+                                />
+                            }
+                            rightTitleStyle={{ fontSize: 15, width: 220 }}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
                                     containerStyle={{backgroundColor: '#FAD291'}}
                                     icon={{
-                                        type: 'font-awesome',
-                                        name: 'money',
+                                        type: 'Entypo',
+                                        name: 'info',
                                     }}
                                 />
                             }
-                            rightIcon={<Chevron/>}
+                        />
+                        <ListItem
+                            title="LastName"
+                            rightTitle={
+                                <TextInput style={{ width: 220, textAlign: 'right' }}
+                                    defaultValue={this.state.lastName}
+                                    onSubmitEditing={(evn) => this.editInfo('lastName', evn.nativeEvent.text)}
+                                />
+                            }
+                            rightTitleStyle={{ fontSize: 15, width: 220 }}
+                            containerStyle={styles.listItemContainer}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#15b046' }}
+                                    icon={{
+                                        type: 'Entypo',
+                                        name: 'info',
+                                    }}
+                                />
+                            }
+                        />
+                        <ListItem
+                            title="Phone"
+                            rightTitle={
+                                <TextInput style={{ width: 220, textAlign: 'right' }}
+                                    defaultValue={this.state.phone}
+                                    onSubmitEditing={(evn) => this.editInfo('phone', evn.nativeEvent.text)}
+                                />
+                            }
+                            rightTitleStyle={{ fontSize: 15, width: 220 }}
+                            containerStyle={styles.listItemContainer}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{backgroundColor: '#FEA8A1'}}
+                                    icon={{
+                                        type: 'FontAwesome',
+                                        name: 'phone',
+                                    }}
+                                />
+                            }
                         />
                         <ListItem
                             title="Address"
                             rightTitle={this.state.address}
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
+                            rightTitleStyle={{ fontSize: 15 }}
                             containerStyle={styles.listItemContainer}
+                            onPress={() => alert('click')}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{backgroundColor: '#57DCE7'}}
+                                    containerStyle={{ backgroundColor: '#57DCE7' }}
                                     icon={{
                                         type: 'material',
                                         name: 'place',
@@ -167,26 +231,9 @@ export default class ProfileScreen extends Component {
                             }
                             rightIcon={<Chevron/>}
                         />
-                        <ListItem
-                            title="Phone"
-                            rightTitle={this.state.phone}
-                            rightTitleStyle={{fontSize: 15}}
-                            onPress={() => this.onPressOptions()}
-                            containerStyle={styles.listItemContainer}
-                            leftIcon={
-                                <BaseIcon
-                                    containerStyle={{backgroundColor: '#FEA8A1'}}
-                                    icon={{
-                                        type: 'material',
-                                        name: 'language',
-                                    }}
-                                />
-                            }
-                            rightIcon={<Chevron/>}
-                        />
+
                     </View>
-                    <InfoText text={"Settings"}/>
-                    <View style={styles.button}>
+                    <View style={styles.button} >
                         <Button
                             title={strings.LOGOUT}
                             onPress={() => this.props.navigation.navigate('Auth')}
