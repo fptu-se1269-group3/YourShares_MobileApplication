@@ -1,4 +1,6 @@
-const COMPANIES = "http://yourshares.tk/api/companies";
+import strings from "../values/Strings";
+
+const COMPANIES = `${strings.BASE_PATH}api/companies`;
 
 export function getCompany(id, token) {
     return fetch(`${COMPANIES}/${id}`, {

@@ -1,6 +1,7 @@
 import Base64 from "Base64";
+import strings from "../values/Strings";
 
-const AUTH = "http://yourshares.tk/auth";
+const AUTH = `${strings.BASE_PATH}auth`;
 
 export function loginWithEmail(email, password) {
     const credentials = Base64.btoa(`${email}:${password}`);
