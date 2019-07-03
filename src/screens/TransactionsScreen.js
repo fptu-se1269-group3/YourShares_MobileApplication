@@ -8,8 +8,6 @@ import Tab1 from './TransactionsAllTab';
 import Tab2 from './TransactionsInTab';
 import Tab3 from './TransactionsOutTab';
 import colors from "../values/Colors";
-import { Array } from "core-js";
-import { ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS } from "expo-intent-launcher";
 
 export default class TransactionsScreen extends Component {
     static navigationOptions = {
@@ -19,46 +17,103 @@ export default class TransactionsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selected: "key1",
+            selected: 'all',
             date2: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
             date: undefined,
-            arrayCompanyId: []
+            arrayCompanyId: [],
+            arrayCompanyName: []
         };
     }
 
     componentDidMount() {
-        console.log(this.state.jwt);
-        //this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5');
+        this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5')
+            .then(() => console.log(this.state.arrayCompanyName[0]))
     }
 
     callAPI(id) {
-        fetch('http://api.yourshares.tk/api/shareholders/users/' + id, {
+        return fetch('http://api.yourshares.tk/api/shareholders/users/' + id, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.state.jwt}`
+                'Authorization': `Bearer ${global['jwt']}`
             },
 
         }).then((response) => {
-            console.log(response.status);
-            response.json()
+            return response.json()
         })
             .then((responseJson) => {
-                console.log(arrayCompanyId[0])
                 for (let i = 0; i < responseJson.count; i++) {
                     this.setState({
-                        arrayCompanyId: this.state.arrayCompanyId.push(responseJson['data'][i].companyId)
-                    })
+                        arrayCompanyId: [...this.state.arrayCompanyId, responseJson['data'][i].companyId]
+
+                    }
+                    )
+                    if (i == responseJson.count - 1) {
+                        return fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
+                            method: 'GET',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${global['jwt']}`
+                            },
+
+                        }).then((response) => {
+                            return response.json()
+                        })
+                            .then((responseJson) => {
+                                this.setState({
+                                    arrayCompanyName: [...this.state.arrayCompanyName, responseJson['data'].companyName]
+
+                                })
+                                console.log(this.state.arrayCompanyId[i]);
+                            })
+                            .catch((error) => {
+                                alert(error);
+                            });
+                    } else {
+                        fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
+                            method: 'GET',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${global['jwt']}`
+                            },
+
+                        }).then((response) => {
+                            return response.json()
+                        })
+                            .then((responseJson) => {
+                                this.setState({
+                                    arrayCompanyName: [...this.state.arrayCompanyName, responseJson['data'].companyName]
+
+                                })
+                                console.log(this.state.arrayCompanyId[i]);
+                            })
+                            .catch((error) => {
+                                alert(error);
+                            });
+                    }
+
                 }
-                console.log(arrayCompanyId[0])
             })
             .catch((error) => {
                 alert(error);
             });
     }
+    renderPicker(){
+        const picker = [];
+        for (let i = 0; i < this.state.arrayCompanyId.length; i++) {
+            console.log(i);
+            picker.push(
+                <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={this.state.arrayCompanyId[i]} />
+            )
+        }
+        return picker;
+    }
 
     render() {
+        console.log('main')
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
@@ -128,11 +183,8 @@ export default class TransactionsScreen extends Component {
                                     textStyle={{ maxWidth: '130%' }}
                                     selectedValue={this.state.selected}
                                     onValueChange={(selected) => this.setState({ selected })}>
-                                    <Picker.Item label="Wallet" value="key0" />
-                                    <Picker.Item label="ATM Card" value="key1" />
-                                    <Picker.Item label="Debit Card" value="key2" />
-                                    <Picker.Item label="Credit Card" value="key3" />
-                                    <Picker.Item label="Net Banking" value="key4" />
+                                    <Picker.Item label="all" value="all" />
+                                    {this.renderPicker()}
                                 </Picker>
                             }
                             rightTitleStyle={{ fontSize: 15, width: '100%', textAlign: 'right' }}

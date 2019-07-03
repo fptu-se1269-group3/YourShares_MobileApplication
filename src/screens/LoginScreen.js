@@ -26,7 +26,6 @@ class LoginScreen extends Component<{}, State> {
     }
 
     handleLoginPress = () => {
-        console.log("Login button pressed");
         const email = this.state.email;
         const password = this.state.password;
         const credentials = Base64.btoa(`${email}:${password}`);
@@ -50,7 +49,7 @@ class LoginScreen extends Component<{}, State> {
                 this.props.navigation.navigate('Main');
             })
             .catch((error) => {
-                console.error(error.message);
+                console.error(error);
                 alert('Wrong email or password!!!');
             });
 
@@ -92,11 +91,11 @@ class LoginScreen extends Component<{}, State> {
     }
 }
 
-function saveLogin(jwt, id) {
+function saveLogin(jwt, userId) {
     SecureStore.setItemAsync('jwt', jwt, {
         keychainAccessible: SecureStore.ALWAYS
     });
-    SecureStore.setItemAsync('id', id, {
+    SecureStore.setItemAsync('userId', userId, {
         keychainAccessible: SecureStore.ALWAYS
     });
 }
