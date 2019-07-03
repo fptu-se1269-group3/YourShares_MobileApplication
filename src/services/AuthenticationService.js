@@ -12,8 +12,6 @@ export function loginWithEmail(email, password) {
             'Authorization': `Basic ${credentials}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`loginWithEmail: ${error}`))
 }
 
 export function registerWithEmail(register) {
@@ -25,9 +23,4 @@ export function registerWithEmail(register) {
         },
         body: JSON.stringify(register)
     })
-        .then(response => {
-            const status = response.status;
-            return status === 200;
-        })
-        .catch(error => console.log(`registerWithEmail: ${error}`))
 }

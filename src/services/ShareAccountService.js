@@ -11,8 +11,6 @@ export function getShareAccount(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getShareAccount: ${error}`))
 }
 
 export function getShareAccountByShareholder(id, token) {
@@ -23,8 +21,6 @@ export function getShareAccountByShareholder(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getShareAccountByShareholder: ${error}`))
 }
 
 export function createShareAccount(shareAccount, token) {
@@ -37,6 +33,4 @@ export function createShareAccount(shareAccount, token) {
         },
         body: JSON.stringify(shareAccount)
     })
-        .then(response => response.json())
-        .catch(error => console.error(`createShareAccount: ${error}`))
 }

@@ -10,8 +10,6 @@ export function getCompany(id, token) {
             'Authorization': `Bearer ${token}`
         }
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getCompany: ${error}`))
 }
 
 export function createCompany(company, token) {
@@ -24,6 +22,4 @@ export function createCompany(company, token) {
         },
         body: JSON.stringify(company)
     })
-        .then(response => response.json())
-        .catch(error => console.error(`createCompany: ${error}`))
 }

@@ -11,8 +11,6 @@ export function getTransaction(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getTransaction: ${error}`))
 }
 
 export function getTransactionByShareAccount(id, token) {
@@ -23,6 +21,4 @@ export function getTransactionByShareAccount(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getTransactionByShareAccount: ${error}`))
 }

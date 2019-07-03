@@ -11,8 +11,6 @@ export function getRoundInvestor(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getRoundInvestor: ${error}`))
 }
 
 export function getRoundInvestorByRound(id, token) {
@@ -23,8 +21,6 @@ export function getRoundInvestorByRound(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getRoundInvestorByRound: ${error}`))
 }
 
 export function createRoundInvestor(roundInvestor, token) {
@@ -37,6 +33,4 @@ export function createRoundInvestor(roundInvestor, token) {
         },
         body: JSON.stringify(roundInvestor)
     })
-        .then(response => response.json())
-        .catch(error => console.error(`createRoundInvestor: ${error}`));
 }

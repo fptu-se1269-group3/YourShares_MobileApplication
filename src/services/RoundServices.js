@@ -11,8 +11,6 @@ export function getRound(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getRound: ${error}`))
 }
 
 export function getRoundByCompany(id, token) {
@@ -23,8 +21,6 @@ export function getRoundByCompany(id, token) {
             'Authorization': `Bearer ${token}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`getRoundByCompany: ${error}`))
 }
 
 export function createRound(round, token) {
@@ -37,6 +33,4 @@ export function createRound(round, token) {
         },
         body: JSON.stringify(round)
     })
-        .then(response => response.json())
-        .catch(error => console.error(`createRound: ${error}`));
 }
