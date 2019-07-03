@@ -15,7 +15,6 @@ import {
     Animated,
     TextInput,
     StatusBar,
-    StatusBarIOS,
     Button,
     View,
 } from 'react-native';
@@ -26,22 +25,23 @@ export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            search: '',
-            jwt: '',
+            search: ''
         };
-    }
-    static navigationOptions = {
-      header: null
-    };
-    componentDidMount() {
         SecureStore.getItemAsync('jwt')
-            .then(jwt => { return jwt })
             .then(jwt => {
-                this.setState({ jwt });
+                global["jwt"] = jwt;
+            })
+            .catch(error => console.error(error));
+        SecureStore.getItemAsync('userId')
+            .then(userId => {
+                global["userId"] = userId;
                 this.search('');
             })
             .catch(error => console.error(error));
     }
+    static navigationOptions = {
+      header: null
+    };
 
     search(search) {
         fetch('http://api.yourshares.tk/api/companies?CompanyName=' + search, {
@@ -49,7 +49,7 @@ export default class HomeScreen extends Component {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.state.jwt}`
+                'Authorization': `Bearer ${global["jwt"]}`
             },
 
         }).then((response) => response.json())
@@ -61,16 +61,18 @@ export default class HomeScreen extends Component {
 
             })
             .catch((error) => {
-                //alert(error);
+                console.error(error)
             });
 
     }
     renderCard = () => {
+        const {navigation} = this.props;
         const card = [];
         for (let i = 0; i < this.state.count; i++) {
             if (Platform.OS === 'ios') {
                 card.push(
-                    <TouchableOpacity key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)}>
+                    <TouchableOpacity key={this.state.data[i].companyId}
+                                      onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}>
                         <Card style={{ borderRadius: 10 }} pointerEvents="none">
                             <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
                                 <Text>{this.state.data[i].companyName}</Text>
@@ -97,7 +99,9 @@ export default class HomeScreen extends Component {
                 )
             } else {
                 card.push(
-                    <TouchableNativeFeedback key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)} useForeground={true}>
+                    <TouchableNativeFeedback key={this.state.data[i].companyId}
+                                             onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}
+                                             useForeground={true}>
                         <View>
                             <Card style={{ borderRadius: 10 }} pointerEvents="none">
                                 <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
@@ -131,7 +135,10 @@ export default class HomeScreen extends Component {
     };
     render() {
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
+                {Platform.OS === 'ios' ? <View style={{height: 20, backgroundColor: "#007FFA" }}>
+                    <StatusBar translucent backgroundColor={{backgroundColor: "#007FFA"}} barStyle={"light-content"}/>
+                </View> : <StatusBar/>}
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
                     placeholder={"Search company ..."}
@@ -146,7 +153,7 @@ export default class HomeScreen extends Component {
                     style={styles.contentContainer}>
                     {this.renderCard()}
                 </ScrollView>
-            </SafeAreaView>
+            </View>
         );
     }
 }

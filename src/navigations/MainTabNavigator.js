@@ -8,6 +8,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import TransactionsScreen from "../screens/TransactionsScreen";
 import colors from "../values/Colors";
+import CompanyDetailScreen from "../screens/CompanyDetailScreen";
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
@@ -25,6 +26,7 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
+        Company: CompanyDetailScreen
     },
     config
 );
@@ -50,6 +52,7 @@ HomeStack.navigationOptions = {
 const ProfileStack = createStackNavigator(
     {
         Profile: ProfileScreen,
+        Settings: SettingsScreen
     },
     config
 );
@@ -65,25 +68,6 @@ ProfileStack.navigationOptions = {
     ),
 };
 
-// LinksStack.path = '';
-
-const SettingsStack = createStackNavigator(
-    {
-        Settings: SettingsScreen,
-    },
-    config
-);
-
-SettingsStack.navigationOptions = {
-    tabBarLabel: 'Settings',
-    tabBarIcon: ({focused}) => (
-        <TabBarIcon
-            type={'ionic'}
-            focused={focused}
-            name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-        />
-    ),
-};
 
 const TransactionsStack = createStackNavigator(
     {
@@ -108,7 +92,6 @@ const tabNavigator = createBottomTabNavigator({
     Home: HomeStack,
     Transactions: TransactionsStack,
     Profile: ProfileStack,
-    Settings: SettingsStack,
 }, {
     initialRouteName: 'Home'
 });

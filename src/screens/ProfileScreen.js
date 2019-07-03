@@ -12,8 +12,6 @@ export default class ProfileScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pushNotifications: true,
-            jwt: '',
             userId: '',
             email: '',
             firstName: '',
@@ -27,21 +25,8 @@ export default class ProfileScreen extends Component {
         title: "Profile"
     };
 
-    // TODO this cause memory leak, fix this
-    componentDidMount() {
-        this.getTokenAsync()
-            .then(jwt => {
-                this.setState({jwt});
-            });
-        this.getUserIdAsync()
-            .then(userId => {
-                this.setState({userId});
-                this.callApi();
-            })
-    }
-
     callApi() {
-        fetch(`http://api.yourshares.tk/api/user/${this.state.userId}`, {
+        fetch(`http://api.yourshares.tk/api/user/${global["userId"]}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -59,7 +44,7 @@ export default class ProfileScreen extends Component {
                 })
             })
             .catch((error) => {
-                alert(error);
+                console.error(error);
             });
     }
 
@@ -83,33 +68,12 @@ export default class ProfileScreen extends Component {
                 })
             })
             .catch((error) => {
-                alert(error);
+                console.error(error);
             });
     }
 
-    getTokenAsync() {
-        return SecureStore.getItemAsync('jwt')
-            .then(jwt => {
-                return jwt
-            })
-            .catch(error => console.error(error));
-    }
-
-    getUserIdAsync() {
-        return SecureStore.getItemAsync('id')
-            .then(userId => {
-                return userId
-            })
-            .catch(error => console.error(error));
-    }
-
-    onChangePushNotifications = () => {
-        this.setState(state => ({
-            pushNotifications: !state.pushNotifications,
-        }))
-    };
-
     render() {
+        const {navigation} = this.props;
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
@@ -231,12 +195,28 @@ export default class ProfileScreen extends Component {
                             }
                             rightIcon={<Chevron/>}
                         />
+                        <InfoText text={"Settings"}/>
+                        <ListItem
+                            title="App settings"
+                            containerStyle={styles.listItemContainer}
+                            onPress={() => navigation.push('Settings')}
+                            leftIcon={
+                                <BaseIcon
+                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    icon={{
+                                        type: 'Feather',
+                                        name: 'settings',
+                                    }}
+                                />
+                            }
+                            rightIcon={<Chevron/>}
+                        />
 
                     </View>
                     <View style={styles.button} >
                         <Button
                             title={strings.LOGOUT}
-                            onPress={() => this.props.navigation.navigate('Auth')}
+                            onPress={() => navigation.navigate('Auth')}
                         />
                     </View>
                 </ScrollView>
