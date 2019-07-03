@@ -8,5 +8,5 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-.idea/
+.idea/*
 yarn-error.log
