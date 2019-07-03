@@ -5,16 +5,21 @@ import { SafeAreaView } from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import { Container, Header, Content, Card, CardItem, Text, Body } from "native-base";
 import * as Icons from "@expo/vector-icons";
-
 import {
     Image,
     Platform,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
+    TouchableNativeFeedback,
+    Animated,
+    TextInput,
+    StatusBar,
+    StatusBarIOS,
     Button,
     View,
 } from 'react-native';
+import colors from "../values/Colors";
 
 
 export default class HomeScreen extends Component {
@@ -25,7 +30,9 @@ export default class HomeScreen extends Component {
             jwt: '',
         };
     }
-
+    static navigationOptions = {
+      header: null
+    };
     componentDidMount() {
         SecureStore.getItemAsync('jwt')
             .then(jwt => { return jwt })
@@ -33,7 +40,7 @@ export default class HomeScreen extends Component {
                 this.setState({ jwt });
                 this.search('');
             })
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
     }
 
     search(search) {
@@ -61,32 +68,63 @@ export default class HomeScreen extends Component {
     renderCard = () => {
         const card = [];
         for (let i = 0; i < this.state.count; i++) {
-            card.push(
-                <TouchableOpacity key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)}>
-                    <Card style={{ borderRadius: 10 }} pointerEvents="none">
-                        <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                            <Text>{this.state.data[i].companyName}</Text>
-                        </CardItem>
-                        <CardItem bordered>
-                            <Body>
-                                <Text>
-                                    {this.state.data[i].companyDescription}
-                            </Text>
-                            </Body>
-                        </CardItem>
-                        <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                            <Body>
-                                <Text>
-                                    <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
-                                </Text>
-                                <Text>
-                                    <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
-                                </Text>
-                            </Body>
-                        </CardItem>
-                    </Card>
-                </TouchableOpacity>
-            )
+            if (Platform.OS === 'ios') {
+                card.push(
+                    <TouchableOpacity key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)}>
+                        <Card style={{ borderRadius: 10 }} pointerEvents="none">
+                            <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
+                                <Text>{this.state.data[i].companyName}</Text>
+                            </CardItem>
+                            <CardItem bordered>
+                                <Body>
+                                    <Text>
+                                        {this.state.data[i].companyDescription}
+                                    </Text>
+                                </Body>
+                            </CardItem>
+                            <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                                <Body>
+                                    <Text>
+                                        <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                                    </Text>
+                                    <Text>
+                                        <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                                    </Text>
+                                </Body>
+                            </CardItem>
+                        </Card>
+                    </TouchableOpacity>
+                )
+            } else {
+                card.push(
+                    <TouchableNativeFeedback key={this.state.data[i].companyId} onPress={() => alert(this.state.data[i].companyId)} useForeground={true}>
+                        <View>
+                            <Card style={{ borderRadius: 10 }} pointerEvents="none">
+                                <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
+                                    <Text>{this.state.data[i].companyName}</Text>
+                                </CardItem>
+                                <CardItem bordered>
+                                    <Body>
+                                        <Text>
+                                            {this.state.data[i].companyDescription}
+                                        </Text>
+                                    </Body>
+                                </CardItem>
+                                <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                                    <Body>
+                                        <Text>
+                                            <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                                        </Text>
+                                        <Text>
+                                            <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                                        </Text>
+                                    </Body>
+                                </CardItem>
+                            </Card>
+                        </View>
+                    </TouchableNativeFeedback>
+                )
+            }
         }
         return card;
 
@@ -96,16 +134,16 @@ export default class HomeScreen extends Component {
             <SafeAreaView style={styles.container}>
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
-                    placeholder="Search company ..."
+                    placeholder={"Search company ..."}
+                    containerStyle={{backgroundColor: colors.HEADER_LIGHT_BLUE}}
                     onChangeText={(search) => {
-                        this.setState({search})
-                        this.search(search)
+                        this.setState({search});
+                        this.search(search);
                         }}
                     value={this.state.search}
                 />
                 <ScrollView
-                    style={styles.container}
-                    contentContainerStyle={styles.contentContainer}>
+                    style={styles.contentContainer}>
                     {this.renderCard()}
                 </ScrollView>
             </SafeAreaView>
@@ -113,24 +151,13 @@ export default class HomeScreen extends Component {
     }
 }
 
-HomeScreen.navigationOptions = {
-    header: null,
-};
-
 const styles = StyleSheet.create({
     container: {
-        marginTop: (Platform.OS === 'ios') ? 0 : 22,
         flex: 1,
-        backgroundColor: '#fff',
-    },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0.4)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center',
+        backgroundColor: '#ffffff',
     },
     contentContainer: {
+        flex: 1,
     },
     welcomeContainer: {
         alignItems: 'center',

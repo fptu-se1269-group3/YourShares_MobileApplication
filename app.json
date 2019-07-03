@@ -29,6 +29,11 @@
     },
     "android": {
       "package": "com.fptu.yourshares"
+    },
+    "androidStatusBarColor": "#007FFA",
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#007FFA"
     }
   }
 }

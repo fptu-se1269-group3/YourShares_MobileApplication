@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import { Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput } from 'react-native';
 import strings from "../values/Strings";
-import { Avatar, ListItem, Text } from "react-native-elements";
-import PropTypes from 'prop-types';
+import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
-import { SafeAreaView } from "react-navigation";
+import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 
 export default class ProfileScreen extends Component {
-
-    static propTypes = {
-        navigation: PropTypes.object.isRequired,
-    };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -29,15 +23,19 @@ export default class ProfileScreen extends Component {
         };
     }
 
+    static navigationOptions = {
+        title: "Profile"
+    };
+
+    // TODO this cause memory leak, fix this
     componentDidMount() {
-        this.getTokenAsyn()
+        this.getTokenAsync()
             .then(jwt => {
-                this.setState({ jwt });
+                this.setState({jwt});
             });
-        this.getUserIdAsyn()
+        this.getUserIdAsync()
             .then(userId => {
-                this.setState({ userId })
-                console.log(this.state.userId);
+                this.setState({userId});
                 this.callApi();
             })
     }
@@ -89,15 +87,20 @@ export default class ProfileScreen extends Component {
             });
     }
 
-    getTokenAsyn() {
+    getTokenAsync() {
         return SecureStore.getItemAsync('jwt')
-            .then(jwt => { return jwt })
-            .catch(error => console.log(error));
+            .then(jwt => {
+                return jwt
+            })
+            .catch(error => console.error(error));
     }
-    getUserIdAsyn() {
+
+    getUserIdAsync() {
         return SecureStore.getItemAsync('id')
-            .then(userId => { return userId })
-            .catch(error => console.log(error));
+            .then(userId => {
+                return userId
+            })
+            .catch(error => console.error(error));
     }
 
     onChangePushNotifications = () => {
@@ -132,7 +135,7 @@ export default class ProfileScreen extends Component {
                             </Text>
                         </View>
                     </View>
-                    <InfoText text="Account" />
+                    <InfoText text={"Account"}/>
                     <View>
                         <ListItem
                             title="Email"
@@ -163,7 +166,7 @@ export default class ProfileScreen extends Component {
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#FAD291' }}
+                                    containerStyle={{backgroundColor: '#FAD291'}}
                                     icon={{
                                         type: 'Entypo',
                                         name: 'info',
@@ -203,7 +206,7 @@ export default class ProfileScreen extends Component {
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#FEA8A1' }}
+                                    containerStyle={{backgroundColor: '#FEA8A1'}}
                                     icon={{
                                         type: 'FontAwesome',
                                         name: 'phone',
@@ -226,7 +229,7 @@ export default class ProfileScreen extends Component {
                                     }}
                                 />
                             }
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
 
                     </View>
@@ -241,12 +244,6 @@ export default class ProfileScreen extends Component {
         );
     }
 }
-
-ProfileScreen.navigationOptions = {
-    title: 'User profile',
-};
-
-ProfileScreen.headerMode = 'none';
 
 const styles = StyleSheet.create({
     container: {

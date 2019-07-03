@@ -4,18 +4,60 @@ import { SafeAreaView } from "react-navigation";
 import { ScrollView, StyleSheet, View, Platform } from 'react-native';
 import { Icon, Picker, Header, Tab, Tabs, TabHeading } from "native-base";
 import DatePicker from 'react-native-datepicker';
-import Tab1 from './SettingsScreen';
-import Tab2 from './SettingsScreen';
-import Tab3 from './SettingsScreen';
+import Tab1 from './TransactionsAllTab';
+import Tab2 from './TransactionsInTab';
+import Tab3 from './TransactionsOutTab';
+import colors from "../values/Colors";
+import { Array } from "core-js";
+import { ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS } from "expo-intent-launcher";
 
 export default class TransactionsScreen extends Component {
+    static navigationOptions = {
+        title: "Transactions"
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             selected: "key1",
-            date2:`${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}"`
+            date2: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+            date: undefined,
+            arrayCompanyId: []
         };
     }
+
+    componentDidMount() {
+        console.log(this.state.jwt);
+        //this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5');
+    }
+
+    callAPI(id) {
+        fetch('http://api.yourshares.tk/api/shareholders/users/' + id, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.jwt}`
+            },
+
+        }).then((response) => {
+            console.log(response.status);
+            response.json()
+        })
+            .then((responseJson) => {
+                console.log(arrayCompanyId[0])
+                for (let i = 0; i < responseJson.count; i++) {
+                    this.setState({
+                        arrayCompanyId: this.state.arrayCompanyId.push(responseJson['data'][i].companyId)
+                    })
+                }
+                console.log(arrayCompanyId[0])
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -37,7 +79,9 @@ export default class TransactionsScreen extends Component {
                                     }
                                     confirmBtnText="Confirm"
                                     cancelBtnText="Cancel"
-                                    onDateChange={(date) => { this.setState({ date: date }) }}
+                                    onDateChange={(date) => {
+                                        this.setState({ date: date })
+                                    }}
                                     customStyles={{
                                         dateInput: {
                                             borderColor: 'white'
@@ -60,7 +104,10 @@ export default class TransactionsScreen extends Component {
                                     iconComponent={
                                         <Icon name="arrow-down" style={{ fontSize: 24, marginRight: 20 }} />
                                     }
-                                    onDateChange={(date2) => { this.setState({ date2: date2 }) }}
+                                    onDateChange={(date2) => {
+                                        this.setState({ date2: date2 });
+
+                                    }}
                                     customStyles={{
                                         dateInput: {
                                             borderColor: 'white',
@@ -91,20 +138,22 @@ export default class TransactionsScreen extends Component {
                             rightTitleStyle={{ fontSize: 15, width: '100%', textAlign: 'right' }}
                             containerStyle={styles.listItemContainer}
                         />
-                        <Tabs>
-                            <Tab heading={<TabHeading>
+                        <Tabs tabBarUnderlineStyle={{ borderBottomWidth: 4, borderColor: colors.HEADER_LIGHT_BLUE }}>
+                            <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}>
                                 <Icon name="arrow-round-up" style={{ color: 'red' }} />
                                 <Icon name="arrow-round-down" style={{ color: 'green' }} />
                                 <Text> All</Text>
                             </TabHeading>}>
-                                <Tab1 />
+                                <Tab1 selected={this.state.selected} date={this.state.date} date2={this.state.date2} />
                             </Tab>
-                            <Tab heading={<TabHeading><Icon name="arrow-round-down" style={{ color: 'green' }} />
-                                <Text>In</Text>
+                            <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-down" style={{ color: 'green' }} />
+                                <Text> In</Text>
                             </TabHeading>}>
                                 <Tab2 />
                             </Tab>
-                            <Tab heading={<TabHeading><Icon name="arrow-round-up" style={{ color: 'red' }} /><Text>Out</Text></TabHeading>}>
+                            <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-up" style={{ color: 'red' }} />
+                                <Text> Out</Text>
+                            </TabHeading>}>
                                 <Tab3 />
                             </Tab>
                         </Tabs>
@@ -114,11 +163,6 @@ export default class TransactionsScreen extends Component {
         );
     }
 }
-
-
-TransactionsScreen.navigationOptions = {
-    title: 'Transactions'
-};
 
 const styles = StyleSheet.create({
     container: {

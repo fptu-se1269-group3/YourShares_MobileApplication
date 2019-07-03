@@ -13,8 +13,10 @@ export default {
   noticeText: '#fff',
   BLACK: "#000",
   LIGHT_GREY: "#D1D1D6",
+  LAYOUT_GREY: "#F4F5F4",
   WHITE: "#FFF",
   DODGER_BLUE: "#428AF8",
+  HEADER_LIGHT_BLUE: "#0089FF",
   SILVER: "#BEBEBE",
   TORCH_RED: "#F8262F",
   MISCHKA: "#E5E4E6"
