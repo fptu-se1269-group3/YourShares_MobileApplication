@@ -3,15 +3,12 @@ import { StyleSheet, View } from 'react-native'
 import { Icon } from 'react-native-elements'
 
 export default function BaseIcon(props) {
-    const { ...icon } = props;
     return (
         <View style={[styles.container, props.containerStyle]}>
             <Icon
                 size={24}
-                color="white"
-                type="material"
-                name="notifications"
-                {...icon}
+                color={"white"}
+                {...props.icon}
             />
         </View>
     );

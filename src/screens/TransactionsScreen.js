@@ -4,9 +4,9 @@ import {SafeAreaView} from "react-navigation";
 import {ScrollView, StyleSheet, View, Platform} from 'react-native';
 import {Icon, Picker, Header, Tab, Tabs, TabHeading} from "native-base";
 import DatePicker from 'react-native-datepicker';
-import Tab1 from './SettingsScreen';
-import Tab2 from './SettingsScreen';
-import Tab3 from './SettingsScreen';
+import Tab1 from './TransactionsAllTab';
+import Tab2 from './TransactionsInTab';
+import Tab3 from './TransactionsOutTab';
 import colors from "../values/Colors";
 
 export default class TransactionsScreen extends Component {
@@ -101,7 +101,7 @@ export default class TransactionsScreen extends Component {
                             rightTitleStyle={{fontSize: 15, width: '100%', textAlign: 'right'}}
                             containerStyle={styles.listItemContainer}
                         />
-                        <Tabs tabBarUnderlineStyle={{borderBottomWidth:2}}>
+                        <Tabs tabBarUnderlineStyle={{borderBottomWidth:4, borderColor: colors.HEADER_LIGHT_BLUE}}>
                             <Tab  heading={<TabHeading style={{backgroundColor: colors.LAYOUT_GREY}}>
                                 <Icon name="arrow-round-up" style={{color: 'red'}}/>
                                 <Icon name="arrow-round-down" style={{color: 'green'}}/>

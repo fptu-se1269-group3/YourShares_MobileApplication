@@ -2,10 +2,9 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 export default function InfoText(props) {
-    const {text} = props;
     return (
         <View style={styles.container}>
-            <Text style={styles.infoText}>{text}</Text>
+            <Text style={styles.infoText}>{props.text}</Text>
         </View>
     );
 }
