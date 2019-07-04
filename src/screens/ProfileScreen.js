@@ -38,7 +38,6 @@ export default class ProfileScreen extends Component {
                 'Authorization': `Bearer ${global["jwt"]}`
             },
         }).then((response) => {
-            console.log(response.status);
             return response.json()})
             .then((responseJson) => {
                 this.setState({
