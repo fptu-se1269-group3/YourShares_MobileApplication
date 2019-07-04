@@ -4,7 +4,7 @@ import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
-import {KeyboardAvoidingView, StatusBar, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback} from 'react-native';
+import {KeyboardAvoidingView, StatusBar, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, Platform} from 'react-native';
 import {Spinner} from "native-base";
 import {loginWithEmail} from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
@@ -55,7 +55,7 @@ export default class LoginScreen extends Component {
     };
 
     handleFacebookLoginPress = () => {
-        Facebook.logInWithReadPermissionsAsync('2475267839196769', {
+        Facebook.logInWithReadPermissionsAsync(strings.FACEBOOK_APP_ID, {
             behavior: 'native'
 
         })
@@ -65,8 +65,8 @@ export default class LoginScreen extends Component {
 
     handleGoogleLoginPress = async () => {
         const config = {
-            androidClientId: '754455661839-524tf6ge17bpc5688ilp7boo6focic8t.apps.googleusercontent.com',
-            iosClientId: '754455661839-et0kfpkkh4g4530dvp6j5hcs1uj3l6hb.apps.googleusercontent.com'
+            androidClientId: strings.GOOGLE_ANDROID_APP_ID,
+            iosClientId: strings.GOOGLE_IOS_APP_ID
         };
         const {type, accessToken, idToken, refreshToken, user} = await Google.logInAsync(config);
 
@@ -100,26 +100,20 @@ export default class LoginScreen extends Component {
                     <View style={styles.buttons}>
                         <View style={styles.button}><Button title={strings.LOGIN}
                                   onPress={this.handleLoginPress}/></View>
-                        <TouchableNativeFeedback  onPress={this.props.action}>
-                            <View style={styles.facebook}>
-                                <Image
-                                    source={require('../assets/images/facebook.png')}
-                                    style={styles.iconStyle}
-                                />
-                                <View style={styles.separatorFacebook} />
-                                <Text style={styles.textFacebook}> {strings.FACEBOOK_LOG_IN} </Text>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <TouchableNativeFeedback style={styles.google} onPress={this.props.action}>
-                            <View style={styles.google}>
-                                <Image
-                                    source={require('../assets/images/google.png')}
-                                    style={styles.iconStyle}
-                                />
-                                <View style={styles.separatorGoogle} />
-                                <Text style={styles.textGoogle}> {strings.GOOGLE_LOG_IN} </Text>
-                            </View>
-                        </TouchableNativeFeedback>
+                        {Platform.OS === 'ios'
+                            ? <TouchableOpacity onPress={this.handleFacebookLoginPress}>
+                                {renderFacebookButton()}
+                            </TouchableOpacity>
+                        : <TouchableNativeFeedback onPress={this.handleFacebookLoginPress}>
+                                {renderFacebookButton()}
+                            </TouchableNativeFeedback>}
+                        {Platform.OS === 'ios'
+                            ? <TouchableOpacity onPress={this.handleGoogleLoginPress}>
+                                {renderGoogleButton()}
+                            </TouchableOpacity>
+                        : <TouchableNativeFeedback onPress={this.handleGoogleLoginPress}>
+                                {renderGoogleButton()}
+                            </TouchableNativeFeedback>}
                     </View>
                     {
                         __DEV__
@@ -137,6 +131,32 @@ export default class LoginScreen extends Component {
             </View>
         );
     }
+}
+
+function renderFacebookButton() {
+    return (
+        <View style={styles.facebook}>
+            <Image
+                source={require('../assets/images/facebook.png')}
+                style={styles.iconStyle}
+            />
+            <View style={styles.separatorFacebook} />
+            <Text style={styles.textFacebook}> {strings.FACEBOOK_LOG_IN} </Text>
+        </View>
+    );
+}
+
+function renderGoogleButton() {
+    return (
+        <View style={styles.google}>
+            <Image
+                source={require('../assets/images/google.png')}
+                style={styles.iconStyle}
+            />
+            <View style={styles.separatorGoogle} />
+            <Text style={styles.textGoogle}> {strings.GOOGLE_LOG_IN} </Text>
+        </View>
+    )
 }
 
 function saveLogin(jwt, userId) {
