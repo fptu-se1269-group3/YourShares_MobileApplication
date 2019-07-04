@@ -1,6 +1,7 @@
 import Base64 from "Base64";
+import strings from "../values/Strings";
 
-const AUTH = "http://yourshares.tk/auth";
+const AUTH = `${strings.BASE_PATH}auth`;
 
 export function loginWithEmail(email, password) {
     const credentials = Base64.btoa(`${email}:${password}`);
@@ -11,8 +12,6 @@ export function loginWithEmail(email, password) {
             'Authorization': `Basic ${credentials}`
         },
     })
-        .then(response => response.json())
-        .catch(error => console.error(`loginWithEmail: ${error}`))
 }
 
 export function registerWithEmail(register) {
@@ -24,9 +23,4 @@ export function registerWithEmail(register) {
         },
         body: JSON.stringify(register)
     })
-        .then(response => {
-            const status = response.status;
-            return status === 200;
-        })
-        .catch(error => console.log(`registerWithEmail: ${error}`))
 }

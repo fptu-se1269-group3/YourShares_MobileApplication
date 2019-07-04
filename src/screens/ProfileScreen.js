@@ -25,15 +25,21 @@ export default class ProfileScreen extends Component {
         title: "Profile"
     };
 
-    callApi() {
+    componentDidMount(): void {
+        this.getInfo();
+    }
+
+    getInfo() {
         fetch(`http://api.yourshares.tk/api/user/${global["userId"]}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.state.jwt}`
+                'Authorization': `Bearer ${global["jwt"]}`
             },
-        }).then((response) => response.json())
+        }).then((response) => {
+            console.log(response.status);
+            return response.json()})
             .then((responseJson) => {
                 this.setState({
                     email: responseJson['data'].email,
@@ -55,7 +61,7 @@ export default class ProfileScreen extends Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.state.jwt}`
+                'Authorization': `Bearer ${global["jwt"]}`
             },
         }).then((response) => response.json())
             .then((responseJson) => {

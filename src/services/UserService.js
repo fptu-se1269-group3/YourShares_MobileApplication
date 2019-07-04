@@ -1,9 +1,9 @@
 import strings from "../values/Strings";
 
-const COMPANIES = `${strings.BASE_PATH}api/companies`;
+const USERS = `${strings.BASE_PATH}api/users`;
 
 export function getCompany(id, token) {
-    return fetch(`${COMPANIES}/${id}`, {
+    return fetch(`${USERS}/${id}`, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -12,14 +12,13 @@ export function getCompany(id, token) {
     })
 }
 
-export function createCompany(company, token) {
-    return fetch(`${COMPANIES}`, {
-        method: 'POST',
+export function updateUser(field, value, token) {
+    return fetch(`${USERS}/${field}?value=${value}`, {
+        method: 'PATCH',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(company)
+        }
     })
 }

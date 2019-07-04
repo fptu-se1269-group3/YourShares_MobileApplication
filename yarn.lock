@@ -2224,7 +2224,7 @@ expo-analytics-segment@~5.0.1:
   resolved "https://registry.yarnpkg.com/expo-analytics-segment/-/expo-analytics-segment-5.0.1.tgz#63443c0c8fa133ce558b557e28baad12326c8bd2"
   integrity sha512-IfGmtzbyBOJEvDYKiXbr/L5RMtZsVqagnOXDhd5LlHYXPSsVyLZUYzi61blyy/Yoc3fPDfAzk9BTfjYR+zD3MQ==
 
-expo-app-auth@^5.0.1, expo-app-auth@~5.0.1:
+expo-app-auth@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/expo-app-auth/-/expo-app-auth-5.0.1.tgz#ddf5417d33931870311c8b7571f8d2ad13bbfc2a"
   integrity sha512-7t2UCw2Ga4t71v4LlaWTu6ikZLG8LEhv3f7dQ82FYO09cQck7PPMJZyWbw7B8pgaFuO7A3mLF1H2F3MXLMZzRw==

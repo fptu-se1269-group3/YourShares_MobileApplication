@@ -65,7 +65,37 @@ export default class HomeScreen extends Component {
             });
 
     }
-    renderCard = () => {
+
+    renderCard(i) {
+        return(
+            <View>
+                <Card style={{ borderRadius: 10 }} pointerEvents="none">
+                    <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
+                        <Text>{this.state.data[i].companyName}</Text>
+                    </CardItem>
+                    <CardItem bordered>
+                        <Body>
+                            <Text>
+                                {this.state.data[i].companyDescription}
+                            </Text>
+                        </Body>
+                    </CardItem>
+                    <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                        <Body>
+                            <Text>
+                                <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                            </Text>
+                            <Text>
+                                <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                            </Text>
+                        </Body>
+                    </CardItem>
+                </Card>
+            </View>
+        );
+    };
+
+    renderCards() {
         const {navigation} = this.props;
         const card = [];
         for (let i = 0; i < this.state.count; i++) {
@@ -73,28 +103,7 @@ export default class HomeScreen extends Component {
                 card.push(
                     <TouchableOpacity key={this.state.data[i].companyId}
                                       onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}>
-                        <Card style={{ borderRadius: 10 }} pointerEvents="none">
-                            <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                                <Text>{this.state.data[i].companyName}</Text>
-                            </CardItem>
-                            <CardItem bordered>
-                                <Body>
-                                    <Text>
-                                        {this.state.data[i].companyDescription}
-                                    </Text>
-                                </Body>
-                            </CardItem>
-                            <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                                <Body>
-                                    <Text>
-                                        <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
-                                    </Text>
-                                    <Text>
-                                        <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
-                                    </Text>
-                                </Body>
-                            </CardItem>
-                        </Card>
+                        {this.renderCard(i)}
                     </TouchableOpacity>
                 )
             } else {
@@ -102,30 +111,7 @@ export default class HomeScreen extends Component {
                     <TouchableNativeFeedback key={this.state.data[i].companyId}
                                              onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}
                                              useForeground={true}>
-                        <View>
-                            <Card style={{ borderRadius: 10 }} pointerEvents="none">
-                                <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                                    <Text>{this.state.data[i].companyName}</Text>
-                                </CardItem>
-                                <CardItem bordered>
-                                    <Body>
-                                        <Text>
-                                            {this.state.data[i].companyDescription}
-                                        </Text>
-                                    </Body>
-                                </CardItem>
-                                <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                                    <Body>
-                                        <Text>
-                                            <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
-                                        </Text>
-                                        <Text>
-                                            <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
-                                        </Text>
-                                    </Body>
-                                </CardItem>
-                            </Card>
-                        </View>
+                        {this.renderCard(i)}
                     </TouchableNativeFeedback>
                 )
             }
@@ -151,7 +137,7 @@ export default class HomeScreen extends Component {
                 />
                 <ScrollView
                     style={styles.contentContainer}>
-                    {this.renderCard()}
+                    {this.renderCards()}
                 </ScrollView>
             </View>
         );

@@ -47,7 +47,6 @@ HomeStack.navigationOptions = {
     ),
 };
 
-// HomeStack.path = '';
 
 const ProfileStack = createStackNavigator(
     {
@@ -86,7 +85,6 @@ TransactionsStack.navigationOptions = {
     )
 };
 
-// SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
     Home: HomeStack,
@@ -95,7 +93,5 @@ const tabNavigator = createBottomTabNavigator({
 }, {
     initialRouteName: 'Home'
 });
-
-// tabNavigator.path = '';
 
 export default tabNavigator;
