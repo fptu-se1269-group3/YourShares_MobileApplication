@@ -30,7 +30,7 @@ export default class ProfileScreen extends Component {
     }
 
     getInfo() {
-        fetch(`http://api.yourshares.tk/api/user/${global["userId"]}`, {
+        fetch(`http://api.yourshares.tk/api/users/${global["userId"]}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
