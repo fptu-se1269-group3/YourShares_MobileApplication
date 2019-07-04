@@ -180,9 +180,18 @@ export default class LoginScreen extends Component {
                         : <TouchableNativeFeedback onPress={this.handleGoogleLoginPress}>
                             {renderGoogleButton()}
                         </TouchableNativeFeedback>}
+                    {
+                        __DEV__
+                            ?
+                            <View style={{marginTop: 10}}>
+                                <Button title={"[DEV] Take me in"}
+                                        onPress={() => this.props.navigation.navigate('Main')}
+                                        color={"red"}/>
+                            </View>
+                            :
+                            <View/>
+                    }
                 </View>
-
-
             </View>
         );
     }

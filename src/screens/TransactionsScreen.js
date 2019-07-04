@@ -29,7 +29,7 @@ export default class TransactionsScreen extends Component {
     }
 
     async componentDidMount() {
-        await this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5');
+        await this.callAPI(global["userId"]);
         await this.getTransaction();
         this.setState({ isLoading: false });
         
