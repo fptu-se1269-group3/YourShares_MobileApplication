@@ -21,90 +21,89 @@ export default class TransactionsScreen extends Component {
             date2: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
             date: undefined,
             arrayCompanyId: [],
-            arrayCompanyName: []
+            arrayCompanyName: [],
+            arrayShareholder: [],
+            isLoading: false,
+            arrayTransaction: [],
         };
     }
 
-    componentDidMount() {
-        this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5')
-            .then(() => console.log(this.state.arrayCompanyName[0]))
+    async componentDidMount() {
+        await this.callAPI('4bae3f57-0dee-421b-dd1c-08d6fe1594e5');
+        await this.getTransaction();
+        this.setState({ isLoading: false });
+        
     }
 
-    callAPI(id) {
-        return fetch('http://api.yourshares.tk/api/shareholders/users/' + id, {
+    async callAPI(id) {
+        this.setState({ isLoading: true });
+        const response = await fetch('http://api.yourshares.tk/api/shareholders/users/' + id, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${global['jwt']}`
             },
-
-        }).then((response) => {
-            return response.json()
         })
-            .then((responseJson) => {
-                for (let i = 0; i < responseJson.count; i++) {
-                    this.setState({
-                        arrayCompanyId: [...this.state.arrayCompanyId, responseJson['data'][i].companyId]
+        const responseJson = await response.json();
+        for (let i = 0; i < responseJson.count; i++) {
+            this.setState({
+                arrayCompanyId: [...this.state.arrayCompanyId, responseJson['data'][i].companyId],
+                arrayShareholder: [...this.state.arrayShareholder, responseJson['data'][i]]
+            }
+            )
+            const response2 = await fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${global['jwt']}`
+                },
 
-                    }
-                    )
-                    if (i == responseJson.count - 1) {
-                        return fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
-                            method: 'GET',
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${global['jwt']}`
-                            },
-
-                        }).then((response) => {
-                            return response.json()
-                        })
-                            .then((responseJson) => {
-                                this.setState({
-                                    arrayCompanyName: [...this.state.arrayCompanyName, responseJson['data'].companyName]
-
-                                })
-                                console.log(this.state.arrayCompanyId[i]);
-                            })
-                            .catch((error) => {
-                                alert(error);
-                            });
-                    } else {
-                        fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
-                            method: 'GET',
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${global['jwt']}`
-                            },
-
-                        }).then((response) => {
-                            return response.json()
-                        })
-                            .then((responseJson) => {
-                                this.setState({
-                                    arrayCompanyName: [...this.state.arrayCompanyName, responseJson['data'].companyName]
-
-                                })
-                                console.log(this.state.arrayCompanyId[i]);
-                            })
-                            .catch((error) => {
-                                alert(error);
-                            });
-                    }
-
-                }
             })
-            .catch((error) => {
-                alert(error);
-            });
+            const responseJson2 = await response2.json();
+            this.setState({
+                arrayCompanyName: [...this.state.arrayCompanyName, responseJson2['data'].companyName]
+            })
+        }
     }
-    renderPicker(){
+
+    async getTransaction() {
+        if (this.state.selected === "all") {
+            for (let i = 0; i < this.state.arrayShareholder.length; i++) {
+                const response = await fetch('http://api.yourshares.tk/api/share-accounts/shareholders/' + this.state.arrayShareholder[i].shareholderId, {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${global['jwt']}`
+                    },
+                })
+                const responseJson = await response.json();
+                if (responseJson['data'][i] != undefined) {
+                    if (responseJson['data'][i].name == 'Standard') {
+                        const response2 = await fetch('http://api.yourshares.tk/api/transactions/share-accounts/' + responseJson['data'][i].shareAccountId, {
+                            method: 'GET',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${global['jwt']}`
+                            },
+
+                        })
+                        const responseJson2 = await response2.json();
+                        this.setState({
+                            arrayTransaction: [...this.state.arrayTransaction, ...responseJson2['data']]
+                        })
+                    }
+                }
+            };
+        }
+    }
+
+    renderPicker() {
         const picker = [];
         for (let i = 0; i < this.state.arrayCompanyId.length; i++) {
-            console.log(i);
             picker.push(
                 <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={this.state.arrayCompanyId[i]} />
             )
@@ -113,7 +112,6 @@ export default class TransactionsScreen extends Component {
     }
 
     render() {
-        console.log('main')
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
@@ -196,17 +194,17 @@ export default class TransactionsScreen extends Component {
                                 <Icon name="arrow-round-down" style={{ color: 'green' }} />
                                 <Text> All</Text>
                             </TabHeading>}>
-                                <Tab1 selected={this.state.selected} date={this.state.date} date2={this.state.date2} />
+                                <Tab1 selected={this.state.selected} date={this.state.date} date2={this.state.date2} arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading} />
                             </Tab>
                             <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-down" style={{ color: 'green' }} />
                                 <Text> In</Text>
                             </TabHeading>}>
-                                <Tab2 />
+                                <Tab2 arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
                             </Tab>
                             <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-up" style={{ color: 'red' }} />
                                 <Text> Out</Text>
                             </TabHeading>}>
-                                <Tab3 />
+                                <Tab3 arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
                             </Tab>
                         </Tabs>
                     </View>
