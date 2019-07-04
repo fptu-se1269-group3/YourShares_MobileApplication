@@ -25,12 +25,12 @@ export default class ProfileScreen extends Component {
         title: "Profile"
     };
 
-    componentDidMount(): void {
+    componentDidMount() {
         this.getInfo();
     }
 
     getInfo() {
-        fetch(`http://api.yourshares.tk/api/user/${global["userId"]}`, {
+        fetch(`http://api.yourshares.tk/api/users/${global["userId"]}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
