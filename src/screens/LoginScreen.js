@@ -47,10 +47,12 @@ export default class LoginScreen extends Component {
                 }
             })
             .then((responseJson) => {
+                this.setState({isLoading: false});
                 saveLogin(responseJson.jwt, responseJson.userId);
                 this.props.navigation.navigate('Main');
             })
             .catch(error => {
+                this.setState({isLoading: false});
                 Alert.alert(
                     'Fail to login',
                     'Wrong email or password',
@@ -60,7 +62,6 @@ export default class LoginScreen extends Component {
                 );
                 console.debug(`[DEBUG] ${error}`)
             })
-            .done(() => this.setState({isLoading: false}))
 
     };
 

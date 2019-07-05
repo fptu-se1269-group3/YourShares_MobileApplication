@@ -4,7 +4,6 @@ import strings from "../values/Strings";
 import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
 import {SafeAreaView} from "react-navigation";
-import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 import color from "../values/Colors";
@@ -18,7 +17,8 @@ export default class ProfileScreen extends Component {
             firstName: '',
             lastName: '',
             phone: '',
-            address: ''
+            address: '',
+            photoUrl: null,
         };
     }
 
@@ -46,7 +46,8 @@ export default class ProfileScreen extends Component {
                     firstName: responseJson['data'].firstName,
                     lastName: responseJson['data'].lastName,
                     phone: responseJson['data'].phone,
-                    address: responseJson['data'].address
+                    address: responseJson['data'].address,
+                    photoUrl: responseJson['data'].photoUrl
                 })
             })
             .catch((error) => {
@@ -85,13 +86,10 @@ export default class ProfileScreen extends Component {
                 <ScrollView style={styles.scroll}>
                     <View style={styles.userRow}>
                         <View style={styles.userImage}>
-                            <Avatar
-                                rounded
-                                size="medium"
-                                source={
-                                    require('../assets/images/photo.png')
-                                }
-                            />
+                            {this.state.photoUrl === null
+                                ? <Avatar rounded size={"medium"} source={require('../assets/images/photo.png')}/>
+                                : <Avatar rounded size={"medium"} source={{uri: this.state.photoUrl}}/>
+                            }
                         </View>
                         <View>
                             <Text style={{ fontSize: 16 }}>{this.state.firstName} {this.state.lastName}</Text>
