@@ -44,14 +44,14 @@ export default class TransactionsScreen extends Component {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${global['jwt']}`
             },
-        })
+        });
         const responseJson = await response.json();
         for (let i = 0; i < responseJson.count; i++) {
             this.setState({
                 arrayCompanyId: [...this.state.arrayCompanyId, responseJson['data'][i].companyId],
                 arrayShareholder: [...this.state.arrayShareholder, responseJson['data'][i]]
             }
-            )
+            );
             const response2 = await fetch('http://api.yourshares.tk/api/companies/' + responseJson['data'][i].companyId, {
                 method: 'GET',
                 headers: {
@@ -60,7 +60,7 @@ export default class TransactionsScreen extends Component {
                     'Authorization': `Bearer ${global['jwt']}`
                 },
 
-            })
+            });
             const responseJson2 = await response2.json();
             this.setState({
                 arrayCompanyName: [...this.state.arrayCompanyName, responseJson2['data'].companyName]
@@ -78,13 +78,13 @@ export default class TransactionsScreen extends Component {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${global['jwt']}`
                     },
-                })
+                });
                 const responseJson = await response.json();
-                if (responseJson['data'][i] != undefined) {
-                    if (responseJson['data'][i].name == 'Standard') {
+                if (responseJson['data'][i] !== undefined) {
+                    if (responseJson['data'][i].name === 'Standard') {
                         this.setState({
                             arrayShareAccount:[...this.state.arrayShareAccount, responseJson['data'][i].shareAccountId]
-                        })
+                        });
                         const response2 = await fetch('http://api.yourshares.tk/api/transactions/share-accounts/' + responseJson['data'][i].shareAccountId, {
                             method: 'GET',
                             headers: {
@@ -93,14 +93,14 @@ export default class TransactionsScreen extends Component {
                                 'Authorization': `Bearer ${global['jwt']}`
                             },
 
-                        })
+                        });
                         const responseJson2 = await response2.json();
                         this.setState({
                             arrayTransaction: [...this.state.arrayTransaction, ...responseJson2['data']]
                         })
                     }
                 }
-            };
+            }
         }
     }
 
@@ -184,7 +184,7 @@ export default class TransactionsScreen extends Component {
                                     textStyle={{ maxWidth: '130%' }}
                                     selectedValue={this.state.selected}
                                     onValueChange={(selected) => this.setState({ selected })}>
-                                    <Picker.Item label="all" value="all" />
+                                    <Picker.Item label="ALL COMPANIES" value="all" />
                                     {this.renderPicker()}
                                 </Picker>
                             }

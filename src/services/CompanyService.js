@@ -23,3 +23,13 @@ export function createCompany(company, token) {
         body: JSON.stringify(company)
     })
 }
+
+export function searchCompany(name, token) {
+    return fetch(`${COMPANIES}?companyName=${name}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+}

@@ -1,7 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { Component } from 'react';
 import { SearchBar, ListItem, Icon } from 'react-native-elements'
-import { SafeAreaView } from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import { Container, Header, Content, Card, CardItem, Text, Body } from "native-base";
 import * as Icons from "@expo/vector-icons";
@@ -19,6 +18,8 @@ import {
     View,
 } from 'react-native';
 import colors from "../values/Colors";
+import {searchCompany} from "../services/CompanyService";
+import {getUser} from "../services/UserService";
 
 
 export default class HomeScreen extends Component {
@@ -30,29 +31,21 @@ export default class HomeScreen extends Component {
         this.state = {
             search: ''
         };
-        SecureStore.getItemAsync('jwt')
-            .then(jwt => {
+    }
+
+    async componentWillMount(): void {
+        await (Promise.all([SecureStore.getItemAsync('jwt'),
+            SecureStore.getItemAsync('userId')])
+            .then(([jwt, userId]) => {
                 global["jwt"] = jwt;
-            })
-            .catch(error => console.error(error));
-        SecureStore.getItemAsync('userId')
-            .then(userId => {
                 global["userId"] = userId;
-                this.search('')
-            })
-            .catch(error => console.error(error));
+            }));
+        this.search('')
     }
 
     search(search) {
-        fetch('http://api.yourshares.tk/api/companies?CompanyName=' + search, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${global["jwt"]}`
-            },
-
-        }).then((response) => response.json())
+        searchCompany(search, global["jwt"])
+            .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
                     count: responseJson.count,

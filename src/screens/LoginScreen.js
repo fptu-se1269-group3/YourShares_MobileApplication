@@ -60,6 +60,7 @@ export default class LoginScreen extends Component {
                 );
                 console.debug(`[DEBUG] ${error}`)
             })
+            .done(() => this.setState({isLoading: false}))
 
     };
 
@@ -151,14 +152,13 @@ export default class LoginScreen extends Component {
     };
 
     render() {
-        console.debug("Login is rendered");
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
                 <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
                 <KeyboardAvoidingView style={styles.form} behavior={"padding"}
                                       enabled>
-                    {this.state.isLoading && <Spinner/>}
+                    {this.state.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={styles.spinner}/>}
                     <View>
                         <FormTextInput
                             value={this.state.email}
@@ -260,6 +260,15 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         width: "75%",
+    },
+    spinner: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     buttons: {
         flex: 1,

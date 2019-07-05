@@ -7,7 +7,7 @@ import {getUser} from "../services/UserService";
 import {getRoundByCompany} from "../services/RoundServices";
 
 
-export default class CompanyDetailScreen extends Component{
+export default class CompanyDetailScreen extends Component {
     static navigationOptions = {
         title: "Company Details"
     };
@@ -15,16 +15,17 @@ export default class CompanyDetailScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            company: this.props.navigation.getParam('company')
+            company: this.props.navigation.getParam('company'),
+            rounds: []
         };
     }
 
     componentDidMount(): void {
         Promise.all([getUser(this.state.company.adminProfileId, global["jwt"]).then(response => response.json()),
-        getRoundByCompany(this.state.company.companyId, global["jwt"]).then(response => response.json())])
+            getRoundByCompany(this.state.company.companyId, global["jwt"]).then(response => response.json())])
             .then(([userJson, roundsJson]) => {
                 this.setState({company: Object.assign({}, this.state.company, {admin: `${userJson.data.firstName} ${userJson.data.lastName}`})});
-                console.log(`Company rounds: ${roundsJson}`)
+                this.setState({rounds: roundsJson.data})
             })
             .catch(error => console.log(error))
     }

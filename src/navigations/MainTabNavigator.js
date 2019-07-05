@@ -58,15 +58,22 @@ const ProfileStack = createStackNavigator(
     config
 );
 
-ProfileStack.navigationOptions = {
-    tabBarLabel: 'Profile',
-    tabBarIcon: ({focused}) => (
-        <TabBarIcon
-            type={'material'}
-            focused={focused}
-            name={'account-circle'}
-        />
-    ),
+ProfileStack.navigationOptions = ({navigation}) => {
+    let tabBarVisible = true;
+    if (navigation.state.index > 0) {
+        tabBarVisible = false
+    }
+    return {
+        tabBarLabel: 'Profile',
+        tabBarIcon: ({focused}) => (
+            <TabBarIcon
+                type={'material'}
+                focused={focused}
+                name={'account-circle'}
+            />
+        ),
+        tabBarVisible: tabBarVisible
+    }
 };
 
 
