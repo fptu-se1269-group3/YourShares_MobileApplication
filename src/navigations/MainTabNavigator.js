@@ -9,6 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import TransactionsScreen from "../screens/TransactionsScreen";
 import colors from "../values/Colors";
 import CompanyDetailScreen from "../screens/CompanyDetailScreen";
+import RoundDetailScreen from "../screens/RoundDetailScreen";
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
@@ -26,7 +27,8 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
-        Company: CompanyDetailScreen
+        Company: CompanyDetailScreen,
+        Round: RoundDetailScreen
     },
     config
 );

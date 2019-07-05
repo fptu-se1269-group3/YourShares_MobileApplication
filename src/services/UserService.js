@@ -2,7 +2,7 @@ import strings from "../values/Strings";
 
 const USERS = `${strings.BASE_PATH}api/users`;
 
-export function getCompany(id, token) {
+export function getUser(id, token) {
     return fetch(`${USERS}/${id}`, {
         method: 'GET',
         headers: {

@@ -4,6 +4,8 @@ import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
+import * as Expo from 'expo';
+
 import {
     KeyboardAvoidingView,
     StatusBar,
@@ -17,6 +19,7 @@ import {Spinner} from "native-base";
 import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
 import {Google} from 'expo';
+import * as LocalAuthentication from "expo-local-authentication";
 
 export default class LoginScreen extends Component {
     static navigationOptions = {
@@ -57,7 +60,6 @@ export default class LoginScreen extends Component {
                 );
                 console.debug(`[DEBUG] ${error}`)
             })
-            .done(() => this.setState({isLoading: false}))
 
     };
 
@@ -75,7 +77,7 @@ export default class LoginScreen extends Component {
                             if (status === 200) {
                                 return response.json()
                             } else {
-                                createProfileOAuth({
+                                return createProfileOAuth({
                                     accountId: json.id,
                                     firstName: json.first_name,
                                     lastName: json.last_name,
@@ -300,14 +302,14 @@ const styles = StyleSheet.create({
     textFacebook: {
         color: '#ffffff',
         fontSize: 16,
-        fontFamily: 'roboto',
+        fontFamily: 'Roboto_medium',
         marginLeft: 'auto',
         marginRight: 'auto'
     },
     textGoogle: {
         color: "#000000",
         fontSize: 16,
-        fontFamily: 'roboto',
+        fontFamily: 'Roboto_medium',
         marginLeft: 'auto',
         marginRight: 'auto'
     },

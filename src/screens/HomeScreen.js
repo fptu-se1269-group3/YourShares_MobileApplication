@@ -22,6 +22,9 @@ import colors from "../values/Colors";
 
 
 export default class HomeScreen extends Component {
+    static navigationOptions = {
+        header: null
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -35,13 +38,10 @@ export default class HomeScreen extends Component {
         SecureStore.getItemAsync('userId')
             .then(userId => {
                 global["userId"] = userId;
-                this.search('');
+                this.search('')
             })
             .catch(error => console.error(error));
     }
-    static navigationOptions = {
-      header: null
-    };
 
     search(search) {
         fetch('http://api.yourshares.tk/api/companies?CompanyName=' + search, {
@@ -56,7 +56,7 @@ export default class HomeScreen extends Component {
             .then((responseJson) => {
                 this.setState({
                     count: responseJson.count,
-                    data: responseJson['data'],
+                    companies: responseJson['data'],
                 })
 
             })
@@ -71,22 +71,22 @@ export default class HomeScreen extends Component {
             <View>
                 <Card style={{ borderRadius: 10 }} pointerEvents="none">
                     <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                        <Text>{this.state.data[i].companyName}</Text>
+                        <Text>{this.state.companies[i].companyName}</Text>
                     </CardItem>
                     <CardItem bordered>
                         <Body>
                             <Text>
-                                {this.state.data[i].companyDescription}
+                                {this.state.companies[i].companyDescription}
                             </Text>
                         </Body>
                     </CardItem>
                     <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
                         <Body>
                             <Text>
-                                <Icons.FontAwesome name={'phone'} /> {this.state.data[i].phone}
+                                <Icons.FontAwesome name={'phone'} /> {this.state.companies[i].phone}
                             </Text>
                             <Text>
-                                <Icons.MaterialIcons name={'place'} /> {this.state.data[i].address}
+                                <Icons.MaterialIcons name={'place'} /> {this.state.companies[i].address}
                             </Text>
                         </Body>
                     </CardItem>
@@ -101,15 +101,15 @@ export default class HomeScreen extends Component {
         for (let i = 0; i < this.state.count; i++) {
             if (Platform.OS === 'ios') {
                 card.push(
-                    <TouchableOpacity key={this.state.data[i].companyId}
-                                      onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}>
+                    <TouchableOpacity key={this.state.companies[i].companyId}
+                                      onPress={() => navigation.push('Company', {company: this.state.companies[i]})}>
                         {this.renderCard(i)}
                     </TouchableOpacity>
                 )
             } else {
                 card.push(
-                    <TouchableNativeFeedback key={this.state.data[i].companyId}
-                                             onPress={() => navigation.push('Company', {companyId: this.state.data[i].companyId})}
+                    <TouchableNativeFeedback key={this.state.companies[i].companyId}
+                                             onPress={() => navigation.push('Company', {company: this.state.companies[i]})}
                                              useForeground={true}>
                         {this.renderCard(i)}
                     </TouchableNativeFeedback>
