@@ -30,6 +30,15 @@
     "android": {
       "package": "com.fptu.yourshares"
     },
+    "web": {
+      "build": {
+        "babel": {
+          "include": [
+            "native-base-shoutem-theme"
+          ]
+        }
+      }
+    },
     "androidStatusBarColor": "#007FFA",
     "androidStatusBar": {
       "barStyle": "light-content",
