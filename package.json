@@ -16,6 +16,7 @@
     "expo-font": "latest",
     "expo-secure-store": "~5.0.1",
     "expo-web-browser": "latest",
+    "jslinq": "^1.0.21",
     "native-base": "^2.12.1",
     "react": "16.8.3",
     "react-dom": "^16.8.6",

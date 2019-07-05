@@ -18,12 +18,13 @@ export default class TransactionsScreen extends Component {
         super(props);
         this.state = {
             selected: 'all',
-            date2: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
+            date2: `${new Date().getDate()}-${new Date().getMonth()+1}-${new Date().getFullYear()}`,
             date: undefined,
             arrayCompanyId: [],
             arrayCompanyName: [],
             arrayShareholder: [],
             isLoading: false,
+            arrayShareAccount:[],
             arrayTransaction: [],
         };
     }
@@ -32,7 +33,6 @@ export default class TransactionsScreen extends Component {
         await this.callAPI(global["userId"]);
         await this.getTransaction();
         this.setState({ isLoading: false });
-        
     }
 
     async callAPI(id) {
@@ -82,6 +82,9 @@ export default class TransactionsScreen extends Component {
                 const responseJson = await response.json();
                 if (responseJson['data'][i] != undefined) {
                     if (responseJson['data'][i].name == 'Standard') {
+                        this.setState({
+                            arrayShareAccount:[...this.state.arrayShareAccount, responseJson['data'][i].shareAccountId]
+                        })
                         const response2 = await fetch('http://api.yourshares.tk/api/transactions/share-accounts/' + responseJson['data'][i].shareAccountId, {
                             method: 'GET',
                             headers: {
@@ -105,7 +108,7 @@ export default class TransactionsScreen extends Component {
         const picker = [];
         for (let i = 0; i < this.state.arrayCompanyId.length; i++) {
             picker.push(
-                <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={this.state.arrayCompanyId[i]} />
+                <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={i} />
             )
         }
         return picker;
@@ -194,17 +197,17 @@ export default class TransactionsScreen extends Component {
                                 <Icon name="arrow-round-down" style={{ color: 'green' }} />
                                 <Text> All</Text>
                             </TabHeading>}>
-                                <Tab1 selected={this.state.selected} date={this.state.date} date2={this.state.date2} arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading} />
+                                <Tab1 selected={this.state.selected} date={this.state.date} date2={this.state.date2} arrayShareAccount={this.state.arrayShareAccount} arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading} />
                             </Tab>
                             <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-down" style={{ color: 'green' }} />
                                 <Text> In</Text>
                             </TabHeading>}>
-                                <Tab2 arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
+                                <Tab2 selected={this.state.selected} date={this.state.date} date2={this.state.date2} arrayShareAccount={this.state.arrayShareAccount} arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
                             </Tab>
                             <Tab heading={<TabHeading style={{ backgroundColor: colors.LAYOUT_GREY }}><Icon name="arrow-round-up" style={{ color: 'red' }} />
                                 <Text> Out</Text>
                             </TabHeading>}>
-                                <Tab3 arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
+                                <Tab3 selected={this.state.selected} date={this.state.date} date2={this.state.date2} arrayShareAccount={this.state.arrayShareAccount} arrayTransaction={this.state.arrayTransaction} isLoading={this.state.isLoading}/>
                             </Tab>
                         </Tabs>
                     </View>
