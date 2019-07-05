@@ -14,6 +14,7 @@
     "expo-asset": "latest",
     "expo-facebook": "~5.0.1",
     "expo-font": "latest",
+    "expo-local-authentication": "~5.0.1",
     "expo-secure-store": "~5.0.1",
     "expo-web-browser": "latest",
     "jslinq": "^1.0.21",

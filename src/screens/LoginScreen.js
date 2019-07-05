@@ -4,11 +4,12 @@ import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
+import * as Expo from 'expo';
+
 import {
     KeyboardAvoidingView,
     StatusBar,
     Alert,
-    TouchableHighlight,
     TouchableOpacity,
     TouchableNativeFeedback,
     Platform,
@@ -18,6 +19,7 @@ import {Spinner} from "native-base";
 import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
 import {Google} from 'expo';
+import * as LocalAuthentication from "expo-local-authentication";
 
 export default class LoginScreen extends Component {
     static navigationOptions = {
@@ -41,13 +43,6 @@ export default class LoginScreen extends Component {
                 if (status === 200) {
                     return response.json();
                 } else {
-                    Alert.alert(
-                        'Fail to login',
-                        'Wrong email or password',
-                        [
-                            {text: 'Try again'},
-                        ]
-                    );
                     return Promise.reject('Login fail')
                 }
             })
@@ -56,31 +51,33 @@ export default class LoginScreen extends Component {
                 this.props.navigation.navigate('Main');
             })
             .catch(error => {
+                Alert.alert(
+                    'Fail to login',
+                    'Wrong email or password',
+                    [
+                        {text: 'TRY AGAIN'},
+                    ]
+                );
                 console.debug(`[DEBUG] ${error}`)
             })
-            .done(() => this.setState({isLoading: false}))
 
     };
 
     handleFacebookLoginPress = async () => {
-        const behavior = Platform.OS === 'ios' ? 'system' : 'native';
         const {type, token, expires, permissions, declinedPermissions} = await Facebook
-            .logInWithReadPermissionsAsync(strings.FACEBOOK_APP_ID, {
-                behavior: behavior
-            });
+            .logInWithReadPermissionsAsync(strings.FACEBOOK_APP_ID);
         if (type === 'success') {
             fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
                 .then(response => response.json())
                 .then(json => {
-                    console.log(`facebook account id: ${json.id}`);
+                    console.log(`Facebook user: ${json}`);
                     loginWithOAuth(json.id, 'facebook')
                         .then(response => {
                             const status = response.status;
-                            console.log(`status ${status}`);
                             if (status === 200) {
                                 return response.json()
                             } else {
-                                createProfileOAuth({
+                                return createProfileOAuth({
                                     accountId: json.id,
                                     firstName: json.first_name,
                                     lastName: json.last_name,
@@ -92,7 +89,6 @@ export default class LoginScreen extends Component {
                             }
                         })
                         .then(json => {
-                            console.log(json);
                             saveLogin(json.jwt, json.userId);
                             this.props.navigation.navigate('Main');
                         })
@@ -100,7 +96,14 @@ export default class LoginScreen extends Component {
                 })
 
         } else {
-            console.log('Login with Facebook fail');
+            Alert.alert(
+                'Facebook login failed',
+                'Permission denied',
+                [
+                    {text: 'DONE'},
+                ]
+            );
+            console.log('Facebook login permission denied');
         }
     };
 
@@ -119,7 +122,7 @@ export default class LoginScreen extends Component {
                     if (status === 200) {
                         return response.json()
                     } else {
-                        createProfileOAuth({
+                        return createProfileOAuth({
                             accountId: user.id,
                             firstName: user.givenName,
                             lastName: user.familyName,
@@ -127,16 +130,23 @@ export default class LoginScreen extends Component {
                             photoUrl: user.photoUrl
                         }, 'google')
                             .then(response => response.json())
+                            .catch(error => console.log(error))
                     }
                 })
                 .then(json => {
                     saveLogin(json.jwt, json.userId);
                     this.props.navigation.navigate('Main');
                 })
-            // let userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
-            //     headers: {Authorization: `Bearer ${accessToken}`},
-            // });
-            // console.log(`Google user response ${JSON.stringify(userInfoResponse)}`)
+                .catch(error => console.log(error));
+        } else {
+            Alert.alert(
+                'Google login failed',
+                'Permission denied',
+                [
+                    {text: 'DONE'},
+                ]
+            );
+            console.log('Google login permission denied');
         }
     };
 
@@ -177,7 +187,7 @@ export default class LoginScreen extends Component {
                         ? <TouchableOpacity onPress={this.handleGoogleLoginPress}>
                             {renderGoogleButton()}
                         </TouchableOpacity>
-                        : <TouchableNativeFeedback onPress={this.handleGoogleLoginPress}>
+                        : <TouchableNativeFeedback onPress={this.handleGoogleLoginPress} useForeground={true}>
                             {renderGoogleButton()}
                         </TouchableNativeFeedback>}
                     {
@@ -240,7 +250,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     logo: {
-        flex: 0.7,
+        flex: 1,
         resizeMode: "contain",
         alignSelf: "center",
         width: "60%",
@@ -292,14 +302,14 @@ const styles = StyleSheet.create({
     textFacebook: {
         color: '#ffffff',
         fontSize: 16,
-        fontFamily: 'roboto',
+        fontFamily: 'Roboto_medium',
         marginLeft: 'auto',
         marginRight: 'auto'
     },
     textGoogle: {
         color: "#000000",
         fontSize: 16,
-        fontFamily: 'roboto',
+        fontFamily: 'Roboto_medium',
         marginLeft: 'auto',
         marginRight: 'auto'
     },
