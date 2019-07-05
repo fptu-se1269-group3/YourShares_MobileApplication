@@ -234,6 +234,7 @@ function renderGoogleButton() {
 }
 
 function saveLogin(jwt, userId) {
+    console.log(`Saving login with ${jwt} and id ${userId}`);
     SecureStore.setItemAsync('jwt', jwt, {
         keychainAccessible: SecureStore.ALWAYS
     });

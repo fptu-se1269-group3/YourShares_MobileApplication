@@ -8,13 +8,14 @@ export default class RoundDetailScreen extends Component {
 
     constructor(props) {
         super(props);
-
+        console.log(this.props.navigation.getParam('roundInvestors'))
     }
 
     render() {
         return (
             <View>
                 <Text>This is round detail screen</Text>
+                <Text>Navigate data print in console for testing</Text>
             </View>
         );
     }

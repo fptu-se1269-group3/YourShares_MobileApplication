@@ -27,8 +27,8 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
-        Company: CompanyDetailScreen,
-        Round: RoundDetailScreen
+        CompanyDetails: CompanyDetailScreen,
+        RoundDetails: RoundDetailScreen
     },
     config
 );

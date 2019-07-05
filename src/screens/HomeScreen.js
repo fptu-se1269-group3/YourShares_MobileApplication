@@ -19,7 +19,6 @@ import {
 } from 'react-native';
 import colors from "../values/Colors";
 import {searchCompany} from "../services/CompanyService";
-import {getUser} from "../services/UserService";
 
 
 export default class HomeScreen extends Component {
@@ -33,7 +32,7 @@ export default class HomeScreen extends Component {
         };
     }
 
-    async componentWillMount(): void {
+    async componentDidMount(): void {
         await (Promise.all([SecureStore.getItemAsync('jwt'),
             SecureStore.getItemAsync('userId')])
             .then(([jwt, userId]) => {
@@ -95,14 +94,14 @@ export default class HomeScreen extends Component {
             if (Platform.OS === 'ios') {
                 card.push(
                     <TouchableOpacity key={this.state.companies[i].companyId}
-                                      onPress={() => navigation.push('Company', {company: this.state.companies[i]})}>
+                                      onPress={() => navigation.push('CompanyDetails', {company: this.state.companies[i]})}>
                         {this.renderCard(i)}
                     </TouchableOpacity>
                 )
             } else {
                 card.push(
                     <TouchableNativeFeedback key={this.state.companies[i].companyId}
-                                             onPress={() => navigation.push('Company', {company: this.state.companies[i]})}
+                                             onPress={() => navigation.push('CompanyDetails', {company: this.state.companies[i]})}
                                              useForeground={true}>
                         {this.renderCard(i)}
                     </TouchableNativeFeedback>
