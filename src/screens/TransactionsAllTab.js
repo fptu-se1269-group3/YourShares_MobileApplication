@@ -35,8 +35,6 @@ export default class TransactionsAllTab extends Component {
             else {
                 var shareAccountIds = this.props.arrayShareAccount[this.props.selected];
                 var myList = this.props.arrayTransaction;
-
-
                 var queryObj = jslinq(myList)
                     .where(function (item) { return item.shareAccountId == shareAccountIds })
                     .where(function (item) { return item.transactionDate >= fromDate })
