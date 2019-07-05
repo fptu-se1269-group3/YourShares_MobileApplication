@@ -19,5 +19,6 @@ export default {
   HEADER_LIGHT_BLUE: "#0089FF",
   SILVER: "#BEBEBE",
   TORCH_RED: "#F8262F",
-  MISCHKA: "#E5E4E6"
+  MISCHKA: "#E5E4E6",
+  TEXT_COLOR:"#5A5A5A"
 };

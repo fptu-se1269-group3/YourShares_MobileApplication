@@ -7,6 +7,7 @@ import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
+import color from "../values/Colors";
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -109,7 +110,8 @@ export default class ProfileScreen extends Component {
                         <ListItem
                             title="Email"
                             rightTitle= {this.state.email}
-                            rightTitleStyle={{ fontSize: 15, width: 220 ,textAlign:'right'}}
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            rightTitleStyle={{ fontSize: 16, width: 220 ,textAlign:'right'}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -125,13 +127,14 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="FirstName"
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             rightTitle={
                                 <TextInput style={{ width: 220, textAlign: 'right' }}
                                     defaultValue={this.state.firstName}
                                     onSubmitEditing={(evn) => this.editInfo('firstName', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 15, width: 220 }}
+                            rightTitleStyle={{ fontSize: 16, width: 220 }}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -145,13 +148,14 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="LastName"
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             rightTitle={
                                 <TextInput style={{ width: 220, textAlign: 'right' }}
                                     defaultValue={this.state.lastName}
                                     onSubmitEditing={(evn) => this.editInfo('lastName', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 15, width: 220 }}
+                            rightTitleStyle={{ fontSize: 16, width: 220 }}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -165,13 +169,14 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="Phone"
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             rightTitle={
                                 <TextInput style={{ width: 220, textAlign: 'right' }}
                                     defaultValue={this.state.phone}
                                     onSubmitEditing={(evn) => this.editInfo('phone', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 15, width: 220 }}
+                            rightTitleStyle={{ fontSize: 16, width: 220 }}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -185,8 +190,9 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="Address"
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             rightTitle={this.state.address}
-                            rightTitleStyle={{ fontSize: 15 }}
+                            rightTitleStyle={{ fontSize: 16 }}
                             containerStyle={styles.listItemContainer}
                             onPress={() => alert('click')}
                             leftIcon={
@@ -203,6 +209,7 @@ export default class ProfileScreen extends Component {
                         <InfoText text={"Settings"}/>
                         <ListItem
                             title="App settings"
+                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             containerStyle={styles.listItemContainer}
                             onPress={() => navigation.push('Settings')}
                             leftIcon={
@@ -218,12 +225,7 @@ export default class ProfileScreen extends Component {
                         />
 
                     </View>
-                    <View style={styles.button} >
-                        <Button
-                            title={strings.LOGOUT}
-                            onPress={() => navigation.navigate('Auth')}
-                        />
-                    </View>
+                    
                 </ScrollView>
             </SafeAreaView>
         );
