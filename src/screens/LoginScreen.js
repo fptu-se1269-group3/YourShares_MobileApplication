@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Image, StyleSheet, View, Button,Dimensions} from "react-native";
+import React, { Component } from "react";
+import { Image, StyleSheet, View, Button, Dimensions } from "react-native";
 import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
@@ -14,10 +14,11 @@ import {
     Platform,
     Text
 } from 'react-native';
-import {Spinner} from "native-base";
-import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
+import { Spinner } from "native-base";
+import { createProfileOAuth, loginWithEmail, loginWithOAuth } from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
-import {Google} from 'expo';
+import { Google } from 'expo';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 export default class LoginScreen extends Component {
     static navigationOptions = {
@@ -29,12 +30,38 @@ export default class LoginScreen extends Component {
         this.state = {
             email: '',
             password: '',
-            isLoading: false
+            isLoading: false,
+            isDoneRenderfirstTime: false,
+        }
+    }
+
+    async componentDidMount() {
+        await (Promise.all([SecureStore.getItemAsync('isfingersprintAuth')])
+            .then((isfingersprintAuth) => {
+                global["isfingersprintAuth"] = isfingersprintAuth;
+            }));
+        await this.handleFingerprint();
+    }
+
+    async handleFingerprint() {
+        if (global["isfingersprintAuth"] == "1") {
+            var hashHardware = await LocalAuthentication.authenticateAsync()
+            if (hashHardware.success) {
+                this.props.navigation.navigate('Main')
+            } else {
+                Alert.alert(
+                    'Wrong Fingersprint',
+                    'Try to login manually',
+                    [
+                        { text: 'Ok' },
+                    ]
+                );
+            }
         }
     }
 
     handleLoginPress = () => {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
         loginWithEmail(this.state.email, this.state.password)
             .then(response => {
                 const status = response.status;
@@ -45,17 +72,17 @@ export default class LoginScreen extends Component {
                 }
             })
             .then((responseJson) => {
-                this.setState({isLoading: false});
+                this.setState({ isLoading: false });
                 saveLogin(responseJson.jwt, responseJson.userId);
                 this.props.navigation.navigate('Main');
             })
             .catch(error => {
-                this.setState({isLoading: false});
+                this.setState({ isLoading: false });
                 Alert.alert(
                     'Fail to login',
                     'Wrong email or password',
                     [
-                        {text: 'TRY AGAIN'},
+                        { text: 'TRY AGAIN' },
                     ]
                 );
                 console.debug(`[DEBUG] ${error}`)
@@ -64,7 +91,7 @@ export default class LoginScreen extends Component {
     };
 
     handleFacebookLoginPress = async () => {
-        const {type, token, expires, permissions, declinedPermissions} = await Facebook
+        const { type, token, expires, permissions, declinedPermissions } = await Facebook
             .logInWithReadPermissionsAsync(strings.FACEBOOK_APP_ID);
         if (type === 'success') {
             fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
@@ -100,7 +127,7 @@ export default class LoginScreen extends Component {
                 'Facebook login failed',
                 'Permission denied',
                 [
-                    {text: 'DONE'},
+                    { text: 'DONE' },
                 ]
             );
             console.log('Facebook login permission denied');
@@ -112,7 +139,7 @@ export default class LoginScreen extends Component {
             androidClientId: strings.GOOGLE_ANDROID_APP_ID,
             iosClientId: strings.GOOGLE_IOS_APP_ID
         };
-        const {type, accessToken, idToken, refreshToken, user} = await Google.logInAsync(config);
+        const { type, accessToken, idToken, refreshToken, user } = await Google.logInAsync(config);
 
         if (type === 'success') {
             console.log(`Google user: ${JSON.stringify(user)}`);
@@ -143,7 +170,7 @@ export default class LoginScreen extends Component {
                 'Google login failed',
                 'Permission denied',
                 [
-                    {text: 'DONE'},
+                    { text: 'DONE' },
                 ]
             );
             console.log('Google login permission denied');
@@ -151,28 +178,28 @@ export default class LoginScreen extends Component {
     };
 
     render() {
-        const {width, height} = Dimensions.get("window");
+        const { width, height } = Dimensions.get("window");
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
-                <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
+                <StatusBar hidden={true} />
+                <Image source={require('../assets/images/logo.png')} style={styles.logo} />
                 <KeyboardAvoidingView style={styles.form} behavior={"padding"}
-                                      enabled>
-                    {this.state.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={styles.spinner}/>}
+                    enabled>
+                    {this.state.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={styles.spinner} />}
                     <View>
                         <FormTextInput
                             value={this.state.email}
-                            onChangeText={(email) => this.setState({email})}
+                            onChangeText={(email) => this.setState({ email })}
                             placeholder={strings.EMAIL_PLACEHOLDER}
                         />
                         <FormTextInput
                             value={this.state.password}
-                            onChangeText={(password) => this.setState({password})}
+                            onChangeText={(password) => this.setState({ password })}
                             placeholder={strings.PASSWORD_PLACEHOLDER}
                             secureTextEntry={true}
                         />
                         <View style={styles.button}><Button title={strings.LOGIN}
-                                                            onPress={this.handleLoginPress}/></View>
+                            onPress={this.handleLoginPress} /></View>
                     </View>
                 </KeyboardAvoidingView>
                 <View style={styles.buttons}>
@@ -193,13 +220,13 @@ export default class LoginScreen extends Component {
                     {
                         __DEV__
                             ?
-                            <View style={{marginTop: 10}}>
+                            <View style={{ marginTop: 10 }}>
                                 <Button title={"[DEV] Take me in"}
-                                        onPress={() => this.props.navigation.navigate('Main')}
-                                        color={"red"}/>
+                                    onPress={() => this.props.navigation.navigate('Main')}
+                                    color={"red"} />
                             </View>
                             :
-                            <View/>
+                            <View />
                     }
                 </View>
             </View>
@@ -214,7 +241,7 @@ function renderFacebookButton() {
                 source={require('../assets/images/facebook.png')}
                 style={styles.iconStyle}
             />
-            <View style={styles.separatorFacebook}/>
+            <View style={styles.separatorFacebook} />
             <Text style={styles.textFacebook}> {strings.FACEBOOK_LOG_IN} </Text>
         </View>
     );
@@ -227,7 +254,7 @@ function renderGoogleButton() {
                 source={require('../assets/images/google.png')}
                 style={styles.iconStyle}
             />
-            <View style={styles.separatorGoogle}/>
+            <View style={styles.separatorGoogle} />
             <Text style={styles.textGoogle}> {strings.GOOGLE_LOG_IN} </Text>
         </View>
     )

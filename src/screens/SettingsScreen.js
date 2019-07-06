@@ -8,32 +8,56 @@ import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 import color from "../values/Colors";
+import * as LocalAuthentication from 'expo-local-authentication';
 
 export default class SettingsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pushNotifications: false
+            pushNotifications: global["isfingersprintAuth"] == "1" ? true : false
         };
     }
     static navigationOptions = {
         title: "Settings"
     };
 
-    onChangePushNotifications() {
+    async componentDidMount() {
+        await (Promise.all([SecureStore.getItemAsync('isfingersprintAuth')])
+            .then((isfingersprintAuth) => {
+                global["isfingersprintAuth"] = isfingersprintAuth;
+            }));
+    }
+
+    async saveData(pushNotifications) {
+        await SecureStore.setItemAsync('isfingersprintAuth', pushNotifications, {
+            keychainAccessible: SecureStore.ALWAYS
+        });
+    }
+
+    async onChangePushNotifications() {
         if (this.state.pushNotifications) {
             this.setState({
                 pushNotifications: false
             })
+            await this.saveData("0");
+            alert("Done");
         } else {
-            this.setState({
-                pushNotifications: true
-            })
+            var check = await LocalAuthentication.hasHardwareAsync()
+            if(check){
+                this.setState({
+                    pushNotifications: true
+                })
+                await this.saveData("1");
+                alert("Done");
+            }else{
+                alert("Device Not Support Fingersprint");
+            }
+            
         }
     }
 
     render() {
-        const {navigation} = this.props;
+        const { navigation } = this.props;
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
