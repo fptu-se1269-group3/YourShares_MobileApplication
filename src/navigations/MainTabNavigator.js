@@ -33,20 +33,27 @@ const HomeStack = createStackNavigator(
     config
 );
 
-HomeStack.navigationOptions = {
-    tabBarLabel: 'Home',
-    header: null,
-    tabBarIcon: ({focused}) => (
-        <TabBarIcon
-            type={'ionic'}
-            focused={focused}
-            name={
-                Platform.OS === 'ios'
-                    ? 'ios-home'
-                    : 'md-home'
-            }
-        />
-    ),
+HomeStack.navigationOptions = ({navigation}) => {
+    let tabBarVisible = true;
+    if (navigation.state.index > 0) {
+        tabBarVisible = false
+    }
+    return {
+        tabBarLabel: 'Home',
+        header: null,
+        tabBarIcon: ({focused}) => (
+            <TabBarIcon
+                type={'ionic'}
+                focused={focused}
+                name={
+                    Platform.OS === 'ios'
+                        ? 'ios-home'
+                        : 'md-home'
+                }
+            />
+        ),
+        tabBarVisible: tabBarVisible
+    };
 };
 
 

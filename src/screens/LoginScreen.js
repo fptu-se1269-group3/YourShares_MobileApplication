@@ -4,7 +4,6 @@ import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
 import * as SecureStore from 'expo-secure-store';
-import * as Expo from 'expo';
 
 import {
     KeyboardAvoidingView,
@@ -19,7 +18,6 @@ import {Spinner} from "native-base";
 import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
 import {Google} from 'expo';
-import * as LocalAuthentication from "expo-local-authentication";
 
 export default class LoginScreen extends Component {
     static navigationOptions = {

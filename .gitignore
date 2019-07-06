@@ -10,3 +10,4 @@ web-build/
 web-report/
 .idea/*
 yarn-error.log
+.vscode/
