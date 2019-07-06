@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Image, StyleSheet, View, Button} from "react-native";
+import {Image, StyleSheet, View, Button,Dimensions} from "react-native";
 import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
@@ -153,6 +153,7 @@ export default class LoginScreen extends Component {
     };
 
     render() {
+        const {width, height} = Dimensions.get("window");
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>

@@ -66,20 +66,20 @@ export default class TransactionsOutTab extends Component {
     renderCard(i) {
         return (
             <View>
-                <Card style={{ borderRadius: 10 }} pointerEvents="none">
-                    <CardItem bordered>
+                <Card pointerEvents="none" >
+                    <CardItem bordered style={{borderWidth:1}}>
                         <Body>
-                            <Text>
-                                Type: {this.state.arrayResult[i].transactionTypeCode}
+                            <Text style={{ textAlign: 'right', alignSelf: 'flex-end', color: colors.TEXT_COLOR }}>
+                                ${this.state.arrayResult[i].transactionValue}
                             </Text>
-                            <Text>
-                                transactionDate: {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}
+                            <Text style={{ position: 'relative', top: -14, color: colors.TEXT_COLOR }}>
+                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}
                             </Text>
-                            <Text>
-                                transactionAmount: {this.state.arrayResult[i].transactionAmount}
+                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5, color: colors.TEXT_COLOR }}>
+                                Deal share with John Adam
                             </Text>
-                            <Text>
-                                transactionValue: {this.state.arrayResult[i].transactionValue}
+                            <Text style={{ color: this.state.arrayResult[i].transactionTypeCode === 'IN' ? "green" : "red", textAlign: 'right', alignSelf: 'flex-end' }}>
+                                {this.state.arrayResult[i].transactionTypeCode === 'IN' ? "+" : "-"}{this.state.arrayResult[i].transactionAmount}
                             </Text>
                         </Body>
                     </CardItem>

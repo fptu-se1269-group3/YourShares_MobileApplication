@@ -32,7 +32,7 @@ export default class HomeScreen extends Component {
         };
     }
 
-    async componentDidMount(): void {
+    async componentDidMount() {
         await (Promise.all([SecureStore.getItemAsync('jwt'),
             SecureStore.getItemAsync('userId')])
             .then(([jwt, userId]) => {

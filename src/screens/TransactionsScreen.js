@@ -119,11 +119,11 @@ export default class TransactionsScreen extends Component {
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
                     <View>
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Text style={{ position: 'relative', bottom: -10 }}> From: </Text>
+                        <View style={{ flex: 1, flexDirection: 'row'}}>
+                            <Text style={{ position: 'relative', bottom: -10 ,color: colors.TEXT_COLOR}}> From: </Text>
                             <View>
                                 <DatePicker
-                                    style={{ alignSelf: 'flex-start' }}
+                                    style={{ alignSelf: 'flex-start'}}
                                     date={this.state.date} //initial date from state
                                     mode="date" //The enum of date, datetime and time
                                     placeholder="From date"
@@ -145,7 +145,7 @@ export default class TransactionsScreen extends Component {
                                     }}
                                 />
                             </View>
-                            <Text style={{ position: 'relative', bottom: -10 }}> To: </Text>
+                            <Text style={{ position: 'relative', bottom: -10,color: colors.TEXT_COLOR }}> To: </Text>
                             <View>
                                 <DatePicker
                                     style={{ alignSelf: 'flex-end' }}
@@ -174,6 +174,7 @@ export default class TransactionsScreen extends Component {
                         </View>
                         <ListItem
                             title="Company"
+                            titleStyle={{color: colors.TEXT_COLOR}}
                             rightTitle={
                                 <Picker
                                     mode="dropdown"
@@ -184,7 +185,7 @@ export default class TransactionsScreen extends Component {
                                     textStyle={{ maxWidth: '130%' }}
                                     selectedValue={this.state.selected}
                                     onValueChange={(selected) => this.setState({ selected })}>
-                                    <Picker.Item label="ALL COMPANIES" value="all" />
+                                    <Picker.Item color='red' label="ALL" value="all" />
                                     {this.renderPicker()}
                                 </Picker>
                             }
