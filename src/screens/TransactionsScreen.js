@@ -185,7 +185,7 @@ export default class TransactionsScreen extends Component {
                                     textStyle={{ maxWidth: '130%' }}
                                     selectedValue={this.state.selected}
                                     onValueChange={(selected) => this.setState({ selected })}>
-                                    <Picker.Item color='red' label="ALL" value="all" />
+                                    <Picker.Item label="ALL" value="all" />
                                     {this.renderPicker()}
                                 </Picker>
                             }

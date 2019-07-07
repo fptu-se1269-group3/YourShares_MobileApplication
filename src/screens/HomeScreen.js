@@ -11,6 +11,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     TouchableNativeFeedback,
+    FlatList,
     Animated,
     TextInput,
     StatusBar,
@@ -28,7 +29,9 @@ export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            search: ''
+            search: '',
+            companies: [],
+            refreshing: false
         };
     }
 
@@ -43,74 +46,71 @@ export default class HomeScreen extends Component {
     }
 
     search(search) {
+        this.setState({refreshing: true});
         searchCompany(search, global["jwt"])
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
-                    count: responseJson.count,
                     companies: responseJson['data'],
                 })
 
             })
             .catch((error) => {
                 console.error(error)
-            });
+            })
+            .done(() => this.setState({refreshing: false}))
 
     }
 
-    renderCard(i) {
-        return(
+    renderCard(item) {
+        return (
             <View>
                 <Card style={{ borderRadius: 10 }} pointerEvents="none">
                     <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                        <Text>{this.state.companies[i].companyName}</Text>
+                        <Text>{item.companyName}</Text>
                     </CardItem>
                     <CardItem bordered>
                         <Body>
                             <Text>
-                                {this.state.companies[i].companyDescription}
+                                {item.companyDescription}
                             </Text>
                         </Body>
                     </CardItem>
                     <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
                         <Body>
                             <Text>
-                                <Icons.FontAwesome name={'phone'} /> {this.state.companies[i].phone}
+                                <Icons.FontAwesome name={'phone'} /> {item.phone}
                             </Text>
                             <Text>
-                                <Icons.MaterialIcons name={'place'} /> {this.state.companies[i].address}
+                                <Icons.MaterialIcons name={'place'} /> {item.address}
                             </Text>
                         </Body>
                     </CardItem>
                 </Card>
             </View>
         );
-    };
+    }
 
-    renderCards() {
+    _renderItem = ({item}) => {
         const {navigation} = this.props;
-        const card = [];
-        for (let i = 0; i < this.state.count; i++) {
-            if (Platform.OS === 'ios') {
-                card.push(
-                    <TouchableOpacity key={this.state.companies[i].companyId}
-                                      onPress={() => navigation.push('CompanyDetails', {company: this.state.companies[i]})}>
-                        {this.renderCard(i)}
-                    </TouchableOpacity>
-                )
-            } else {
-                card.push(
-                    <TouchableNativeFeedback key={this.state.companies[i].companyId}
-                                             onPress={() => navigation.push('CompanyDetails', {company: this.state.companies[i]})}
-                                             useForeground={true}>
-                        {this.renderCard(i)}
-                    </TouchableNativeFeedback>
-                )
-            }
+        if (Platform.OS === 'ios') {
+            return (
+                <TouchableOpacity key={item.companyId}
+                                  onPress={() => navigation.push('CompanyDetails', {company: item})}>
+                    {this.renderCard(item)}
+                </TouchableOpacity>
+            );
+        } else {
+            return (
+                <TouchableNativeFeedback key={item.companyId}
+                                         onPress={() => navigation.push('CompanyDetails', {company: item})}
+                                         useForeground={true}>
+                    {this.renderCard(item)}
+                </TouchableNativeFeedback>
+            );
         }
-        return card;
-
     };
+
     render() {
         return (
             <View style={styles.container}>
@@ -124,12 +124,15 @@ export default class HomeScreen extends Component {
                     onChangeText={(search) => {
                         this.setState({search});
                         this.search(search);
-                        }}
+                    }}
                     value={this.state.search}
                 />
-                <ScrollView style={styles.contentContainer}>
-                    {this.renderCards()}
-                </ScrollView>
+                <FlatList keyExtractor={item => item.companyId}
+                          data={this.state.companies}
+                          renderItem={this._renderItem}
+                          refreshing={this.state.refreshing}
+                          onRefresh={() => this.search(this.state.search)}
+                />
             </View>
         );
     }
