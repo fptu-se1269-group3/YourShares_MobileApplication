@@ -20,5 +20,6 @@ export default {
   SILVER: "#BEBEBE",
   TORCH_RED: "#F8262F",
   MISCHKA: "#E5E4E6",
-  TEXT_COLOR:"#5A5A5A"
+  TEXT_COLOR:"#5A5A5A",
+  TEXT_LINK: "#0645AD"
 };

@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import { Image, StyleSheet, View, Button, Dimensions } from "react-native";
+import React, {Component} from "react";
 import strings from '../values/Strings';
 import colors from '../values/Colors';
 import FormTextInput from "../components/FormTextInput";
@@ -12,12 +11,17 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     Platform,
-    Text
+    Text,
+    Image,
+    StyleSheet,
+    View,
+    Button,
+    Dimensions
 } from 'react-native';
-import { Spinner } from "native-base";
-import { createProfileOAuth, loginWithEmail, loginWithOAuth } from "../services/AuthenticationService";
+import {Spinner} from "native-base";
+import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
 import * as Facebook from "expo-facebook";
-import { Google } from 'expo';
+import {Google} from 'expo';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default class LoginScreen extends Component {
@@ -53,7 +57,7 @@ export default class LoginScreen extends Component {
                     'Wrong Fingersprint',
                     'Try to login manually',
                     [
-                        { text: 'Ok' },
+                        {text: 'Ok'},
                     ]
                 );
             }
@@ -61,7 +65,7 @@ export default class LoginScreen extends Component {
     }
 
     handleLoginPress = () => {
-        this.setState({ isLoading: true });
+        this.setState({isLoading: true});
         loginWithEmail(this.state.email, this.state.password)
             .then(response => {
                 const status = response.status;
@@ -72,17 +76,17 @@ export default class LoginScreen extends Component {
                 }
             })
             .then((responseJson) => {
-                this.setState({ isLoading: false });
+                this.setState({isLoading: false});
                 saveLogin(responseJson.jwt, responseJson.userId);
                 this.props.navigation.navigate('Main');
             })
             .catch(error => {
-                this.setState({ isLoading: false });
+                this.setState({isLoading: false});
                 Alert.alert(
                     'Fail to login',
                     'Wrong email or password',
                     [
-                        { text: 'TRY AGAIN' },
+                        {text: 'TRY AGAIN'},
                     ]
                 );
                 console.debug(`[DEBUG] ${error}`)
@@ -91,7 +95,7 @@ export default class LoginScreen extends Component {
     };
 
     handleFacebookLoginPress = async () => {
-        const { type, token, expires, permissions, declinedPermissions } = await Facebook
+        const {type, token, expires, permissions, declinedPermissions} = await Facebook
             .logInWithReadPermissionsAsync(strings.FACEBOOK_APP_ID);
         if (type === 'success') {
             fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
@@ -127,7 +131,7 @@ export default class LoginScreen extends Component {
                 'Facebook login failed',
                 'Permission denied',
                 [
-                    { text: 'DONE' },
+                    {text: 'DONE'},
                 ]
             );
             console.log('Facebook login permission denied');
@@ -139,7 +143,7 @@ export default class LoginScreen extends Component {
             androidClientId: strings.GOOGLE_ANDROID_APP_ID,
             iosClientId: strings.GOOGLE_IOS_APP_ID
         };
-        const { type, accessToken, idToken, refreshToken, user } = await Google.logInAsync(config);
+        const {type, accessToken, idToken, refreshToken, user} = await Google.logInAsync(config);
 
         if (type === 'success') {
             console.log(`Google user: ${JSON.stringify(user)}`);
@@ -170,7 +174,7 @@ export default class LoginScreen extends Component {
                 'Google login failed',
                 'Permission denied',
                 [
-                    { text: 'DONE' },
+                    {text: 'DONE'},
                 ]
             );
             console.log('Google login permission denied');
@@ -178,28 +182,45 @@ export default class LoginScreen extends Component {
     };
 
     render() {
-        const { width, height } = Dimensions.get("window");
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true} />
-                <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+                <StatusBar hidden={true}/>
+                <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
                 <KeyboardAvoidingView style={styles.form} behavior={"padding"}
-                    enabled>
-                    {this.state.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={styles.spinner} />}
+                                      enabled>
+                    {this.state.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={styles.spinner}/>}
                     <View>
                         <FormTextInput
                             value={this.state.email}
-                            onChangeText={(email) => this.setState({ email })}
+                            onChangeText={(email) => this.setState({email})}
                             placeholder={strings.EMAIL_PLACEHOLDER}
                         />
                         <FormTextInput
                             value={this.state.password}
-                            onChangeText={(password) => this.setState({ password })}
+                            onChangeText={(password) => this.setState({password})}
                             placeholder={strings.PASSWORD_PLACEHOLDER}
                             secureTextEntry={true}
                         />
-                        <View style={styles.button}><Button title={strings.LOGIN}
-                            onPress={this.handleLoginPress} /></View>
+                        <View style={styles.button}>
+                            <Button title={strings.LOGIN} onPress={this.handleLoginPress}/>
+                        </View>
+                        <Text style={{
+                            textAlign: 'center',
+                            color: colors.TEXT_LINK,
+                            fontSize: 15,
+                            marginTop: '2%',
+                            marginBottom: '2%',
+                            fontWeight: 'bold'
+                        }}
+                              onPress={() => console.log('Forgot password')}>
+                            Forgot your password?
+                        </Text>
+
+                        <Text style={{textAlign: 'center', fontSize: 15, color: '#7a7676'}}>Don't have and account yet?
+                            <Text style={{color: colors.TEXT_LINK, fontWeight: 'bold'}}
+                                  onPress={() => this.props.navigation.navigate('Register')}> Register</Text>
+                        </Text>
+
                     </View>
                 </KeyboardAvoidingView>
                 <View style={styles.buttons}>
@@ -218,15 +239,12 @@ export default class LoginScreen extends Component {
                             {renderGoogleButton()}
                         </TouchableNativeFeedback>}
                     {
-                        __DEV__
-                            ?
-                            <View style={{ marginTop: 10 }}>
+                        __DEV__ &&
+                            <View style={{marginTop: 10}}>
                                 <Button title={"[DEV] Take me in"}
-                                    onPress={() => this.props.navigation.navigate('Main')}
-                                    color={"red"} />
+                                        onPress={() => this.props.navigation.navigate('Main')}
+                                        color={"red"}/>
                             </View>
-                            :
-                            <View />
                     }
                 </View>
             </View>
@@ -241,7 +259,7 @@ function renderFacebookButton() {
                 source={require('../assets/images/facebook.png')}
                 style={styles.iconStyle}
             />
-            <View style={styles.separatorFacebook} />
+            <View style={styles.separatorFacebook}/>
             <Text style={styles.textFacebook}> {strings.FACEBOOK_LOG_IN} </Text>
         </View>
     );
@@ -254,7 +272,7 @@ function renderGoogleButton() {
                 source={require('../assets/images/google.png')}
                 style={styles.iconStyle}
             />
-            <View style={styles.separatorGoogle} />
+            <View style={styles.separatorGoogle}/>
             <Text style={styles.textGoogle}> {strings.GOOGLE_LOG_IN} </Text>
         </View>
     )
@@ -278,14 +296,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     logo: {
-        flex: 1,
+        flex: 0.6,
         resizeMode: "contain",
         alignSelf: "center",
         width: "60%",
         marginTop: "10%"
     },
     form: {
-        flex: 1,
+        flex: 1.2,
         justifyContent: "center",
         width: "75%",
     },
@@ -299,7 +317,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     buttons: {
-        flex: 1,
+        flex: 0.8,
         justifyContent: "center",
         width: "75%",
         marginBottom: "5%"
