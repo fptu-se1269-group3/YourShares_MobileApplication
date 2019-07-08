@@ -34,3 +34,14 @@ export function createShareAccount(shareAccount, token) {
         body: JSON.stringify(shareAccount)
     })
 }
+
+export function getUserShareAccountInCompany(companyId, userId ,token) {
+    return fetch(`${SHARE_ACCOUNTS}?CompanyId=${companyId}&UserId=${userId}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+}

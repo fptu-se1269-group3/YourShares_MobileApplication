@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput } from 'react-native';
+import React, {Component} from 'react';
+import {Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput} from 'react-native';
 import strings from "../values/Strings";
 import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
 import {SafeAreaView} from "react-navigation";
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
-import color from "../values/Colors";
+import colors from "../values/Colors";
+import {getUser, updateUser} from "../services/UserService";
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -31,16 +32,9 @@ export default class ProfileScreen extends Component {
     }
 
     getInfo() {
-        fetch(`http://api.yourshares.tk/api/users/${global["userId"]}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${global["jwt"]}`
-            },
-        }).then((response) => {
-            return response.json()})
-            .then((responseJson) => {
+        getUser(global["userId"], global["jwt"])
+            .then(response => response.json())
+            .then(responseJson => {
                 this.setState({
                     email: responseJson['data'].email,
                     firstName: responseJson['data'].firstName,
@@ -56,15 +50,8 @@ export default class ProfileScreen extends Component {
     }
 
     editInfo(field, editField) {
-        console.log(field + " " + editField);
-        fetch(`http://api.yourshares.tk/api/users/${field}?value=${editField}`, {
-            method: 'PATCH',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${global["jwt"]}`
-            },
-        }).then((response) => response.json())
+        updateUser(field, editField, global["jwt"])
+            .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
                     email: responseJson['data'].email,
@@ -92,7 +79,7 @@ export default class ProfileScreen extends Component {
                             }
                         </View>
                         <View>
-                            <Text style={{ fontSize: 16 }}>{this.state.firstName} {this.state.lastName}</Text>
+                            <Text style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
                             <Text
                                 style={{
                                     color: 'gray',
@@ -107,9 +94,9 @@ export default class ProfileScreen extends Component {
                     <View>
                         <ListItem
                             title="Email"
-                            rightTitle= {this.state.email}
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
-                            rightTitleStyle={{ fontSize: 16, width: 220 ,textAlign:'right'}}
+                            rightTitle={this.state.email}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                            rightTitleStyle={{fontSize: 16, width: 220, textAlign: 'right'}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -125,14 +112,14 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="FirstName"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={
-                                <TextInput style={{ width: 220, textAlign: 'right' }}
-                                    defaultValue={this.state.firstName}
-                                    onSubmitEditing={(evn) => this.editInfo('firstName', evn.nativeEvent.text)}
+                                <TextInput style={{width: 220, textAlign: 'right'}}
+                                           defaultValue={this.state.firstName}
+                                           onSubmitEditing={(evn) => this.editInfo('firstName', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 16, width: 220 }}
+                            rightTitleStyle={{fontSize: 16, width: 220}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -146,18 +133,18 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="LastName"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={
-                                <TextInput style={{ width: 220, textAlign: 'right' }}
-                                    defaultValue={this.state.lastName}
-                                    onSubmitEditing={(evn) => this.editInfo('lastName', evn.nativeEvent.text)}
+                                <TextInput style={{width: 220, textAlign: 'right'}}
+                                           defaultValue={this.state.lastName}
+                                           onSubmitEditing={(evn) => this.editInfo('lastName', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 16, width: 220 }}
+                            rightTitleStyle={{fontSize: 16, width: 220}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#15b046' }}
+                                    containerStyle={{backgroundColor: '#15b046'}}
                                     icon={{
                                         type: 'Entypo',
                                         name: 'info',
@@ -167,14 +154,14 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="Phone"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={
-                                <TextInput style={{ width: 220, textAlign: 'right' }}
-                                    defaultValue={this.state.phone}
-                                    onSubmitEditing={(evn) => this.editInfo('phone', evn.nativeEvent.text)}
+                                <TextInput style={{width: 220, textAlign: 'right'}}
+                                           defaultValue={this.state.phone}
+                                           onSubmitEditing={(evn) => this.editInfo('phone', evn.nativeEvent.text)}
                                 />
                             }
-                            rightTitleStyle={{ fontSize: 16, width: 220 }}
+                            rightTitleStyle={{fontSize: 16, width: 220}}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
@@ -188,14 +175,13 @@ export default class ProfileScreen extends Component {
                         />
                         <ListItem
                             title="Address"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={this.state.address}
-                            rightTitleStyle={{ fontSize: 16 }}
+                            rightTitleStyle={{fontSize: 16}}
                             containerStyle={styles.listItemContainer}
-                            onPress={() => alert('click')}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    containerStyle={{backgroundColor: '#57DCE7'}}
                                     icon={{
                                         type: 'material',
                                         name: 'place',
@@ -207,12 +193,12 @@ export default class ProfileScreen extends Component {
                         <InfoText text={"Settings"}/>
                         <ListItem
                             title="App settings"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
                             onPress={() => navigation.push('Settings')}
                             leftIcon={
                                 <BaseIcon
-                                    containerStyle={{ backgroundColor: '#57DCE7' }}
+                                    containerStyle={{backgroundColor: '#57DCE7'}}
                                     icon={{
                                         type: 'Feather',
                                         name: 'settings',
@@ -223,7 +209,7 @@ export default class ProfileScreen extends Component {
                         />
 
                     </View>
-                    
+
                 </ScrollView>
             </SafeAreaView>
         );
@@ -256,10 +242,4 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: '#ECECEC',
     },
-    button: {
-        marginTop: 12,
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center"
-    }
 });

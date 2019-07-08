@@ -9,12 +9,16 @@ import {
     StyleSheet,
     FlatList
 } from 'react-native'
-import {Body, Card, CardItem, Icon, Item, Tab, TabHeading, Tabs} from "native-base";
+import {Body, Card, CardItem, Icon, Item, Tab, TabHeading, Tabs, Accordion} from "native-base";
 import {getUser} from "../services/UserService";
 import {getRoundByCompany} from "../services/RoundServices";
 import {getRoundInvestorByRound} from "../services/RoundInvestorService";
 import colors from "../values/Colors";
 import * as Icons from "@expo/vector-icons";
+import {ListItem} from "react-native-elements";
+import Chevron from "../components/Chevron";
+import InfoText from "../components/InfoText";
+import {ScrollView} from "react-navigation";
 
 
 export default class CompanyDetailScreen extends Component {
@@ -47,11 +51,10 @@ export default class CompanyDetailScreen extends Component {
     }
 
     refresh = async () => {
-        await Promise.all([getUser(this.state.company.adminProfileId, global["jwt"]).then(response => response.json()),
-            getRoundByCompany(this.state.company.companyId, global["jwt"]).then(response => response.json())])
-            .then(([userJson, roundsJson]) => {
-                this.setState({company: Object.assign({}, this.state.company, {admin: `${userJson.data.firstName} ${userJson.data.lastName}`})});
-                this.setState({rounds: roundsJson.data});
+        await getRoundByCompany(this.state.company.companyId, global["jwt"])
+            .then(response => response.json())
+            .then(json => {
+                this.setState({rounds: json.data});
             })
             .catch(error => console.log(error));
     };
@@ -81,39 +84,80 @@ export default class CompanyDetailScreen extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
+                <Text style={[styles.company]}>{this.state.company.companyName} </Text>
+                <View style={{flex: 1}}>
+                    <InfoText text={"Your Shareholding Status"}/>
+                    <Card style={{borderRadius: 10}} pointerEvents="none">
+                        <CardItem bordered style={{borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'space-between'}}>
+                            <Body>
+                                <Text style={{color: 'green', fontWeight: 'bold', marginBottom: "1%"}}>
+                                    Standard Account
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
+                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>2000 (5%)</Text>
+                                </View>
+                            </Body>
+                        </CardItem>
+                        <CardItem footer bordered style={{borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'space-between'}}>
+                            <Body>
+                                <Text style={{color: 'orange', fontWeight: 'bold', marginBottom: "1%"}}>
+                                    Restricted Account
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
+                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>2000 (5%)</Text>
+                                </View>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Convertible</Text>
+                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>50% at Mar 25 2020</Text>
+                                </View>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                </View>
+                <InfoText text={"Information"}/>
                 <View style={styles.information}>
-                    <Text style={[styles.company]}> {this.state.company.companyName} </Text>
-                    <Text style={[styles.infoText, {textAlign: 'right', fontFamily:'Roboto_medium'}]} >Founder : {this.state.company.admin}</Text>
-                    <Text style={styles.infoText}> {this.state.company.companyDescription} </Text>
-                    <Text style={styles.infoText}>
-                        <Icons.FontAwesome name={'phone'}/> Phone: {this.state.company.phone}
-                    </Text>
-                    <Text style={styles.infoText}>
-                        <Icons.MaterialIcons name={'place'}/> Main address: {this.state.company.address}
-                    </Text>
-                    <Text style={styles.infoText}>
-                        <Icons.MaterialIcons name={'attach-money'}/> {this.state.company.capital}
-                    </Text>
-                    <Text style={styles.infoText}>
-                        <Icons.FontAwesome name={'money'}/> {this.state.company.totalShares}
-                    </Text>
+                    <ListItem title={"Founder"}
+                              rightTitle={this.state.company.adminName}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                    />
+                    <ListItem title={"Funding Rounds"}
+                              rightTitle={`${this.state.rounds.length}`}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                              rightIcon={<Chevron/>}
+                    />
+                    <ListItem title={"Total Funding Amount"}
+                              rightTitle={`5000000`}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                    />
+                    <ListItem title={"Capital"}
+                              rightTitle={this.state.company.capital}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                    />
+                    <ListItem title={"Shares Volume"}
+                              rightTitle={this.state.company.totalShares}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                    />
+                    <ListItem title={"Phone"}
+                              rightTitle={this.state.company.phone}
+                              containerStyle={styles.listItemContainer}
+                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                    />
+                    <Accordion dataArray={[
+                        {title: 'Address', content: this.state.company.address},
+                        {title: 'Description', content: this.state.company.companyDescription}
+                    ]}
+                               headerStyle={{backgroundColor: "#fff"}}
+                    />
                 </View>
-                <View style={styles.tabs}>
-                    <Tabs tabBarUnderlineStyle={{borderBottomWidth: 4, borderColor: colors.HEADER_LIGHT_BLUE}}>
-                        <Tab heading={<TabHeading style={{backgroundColor: colors.LAYOUT_GREY}}>
-                            <Text>Rounds</Text>
-                        </TabHeading>}>
-                            {this.TabRounds()}
-                        </Tab>
-                        <Tab heading={<TabHeading style={{backgroundColor: colors.LAYOUT_GREY}}>
-                            <Text>Shareholders</Text>
-                        </TabHeading>}>
-                            {this.TabShareholders()}
-                        </Tab>
-                    </Tabs>
-                </View>
-            </View>
+            </ScrollView>
         );
     }
 
@@ -158,24 +202,40 @@ export default class CompanyDetailScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#F4F5F4"
     },
     information: {
-        flex: 1,
-        marginLeft: "2%",
-        marginRight: "2%",
+        flex: 3,
+        marginLeft: "1%",
+        marginRight: "1%",
         marginBottom: "1%",
-        justifyContent: 'space-between'
     },
     infoText: {
         fontFamily: 'Roboto',
         fontSize: 15
     },
-    tabs: {
-        flex: 2,
+    row: {
+        backgroundColor: "#ffffff",
+        alignItems: 'center',
+        flexDirection: 'row',
+        paddingBottom: 8,
+        paddingLeft: 15,
+        paddingRight: 15,
+        paddingTop: 6,
+    },
+    listItemContainer: {
+        height: 55,
+        borderWidth: 1,
+        borderColor: '#ECECEC',
+    },
+    yourShares: {
+        flex: 0.5,
     },
     company: {
         fontFamily: 'Roboto_medium',
         fontSize: 20,
+        marginLeft: "1%",
+        marginRight: "1%",
         textAlign: 'center',
         marginTop: "2%",
         color: colors.DODGER_BLUE,
