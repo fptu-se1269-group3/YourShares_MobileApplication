@@ -6,6 +6,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import QRCodeScanScreen from '../screens/QRCodeScanScreen';
 import TransactionsScreen from "../screens/TransactionsScreen";
 import colors from "../values/Colors";
 import CompanyDetailScreen from "../screens/CompanyDetailScreen";
@@ -60,7 +61,8 @@ HomeStack.navigationOptions = ({navigation}) => {
 const ProfileStack = createStackNavigator(
     {
         Profile: ProfileScreen,
-        Settings: SettingsScreen
+        Settings: SettingsScreen,
+        QRScan: QRCodeScanScreen
     },
     config
 );
