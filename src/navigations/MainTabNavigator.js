@@ -11,6 +11,7 @@ import TransactionsScreen from "../screens/TransactionsScreen";
 import colors from "../values/Colors";
 import CompanyDetailScreen from "../screens/CompanyDetailScreen";
 import RoundDetailScreen from "../screens/RoundDetailScreen";
+import RequestTransactionScreen from "../screens/RequestTransactionScreen";
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
