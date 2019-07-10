@@ -1,8 +1,8 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { Component } from 'react';
-import { SearchBar, ListItem, Icon } from 'react-native-elements'
+import React, {Component} from 'react';
+import {SearchBar, ListItem, Icon, Avatar} from 'react-native-elements'
 import * as SecureStore from 'expo-secure-store';
-import { Container, Header, Content, Card, CardItem, Text, Body, Spinner } from "native-base";
+import {Container, Header, Content, Card, CardItem, Text, Body, Spinner} from "native-base";
 import * as Icons from "@expo/vector-icons";
 import {
     Image,
@@ -20,12 +20,15 @@ import {
 } from 'react-native';
 import colors from "../values/Colors";
 import {searchCompany} from "../services/CompanyService";
+import {getShareholder, getShareholderByCompany, getShareholderByUser} from "../services/ShareholderService";
+import {getShareAccountByShareholder, getUserShareAccountInCompany} from "../services/ShareAccountService";
 
 
 export default class HomeScreen extends Component {
     static navigationOptions = {
         header: null
     };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -45,47 +48,109 @@ export default class HomeScreen extends Component {
         this.search('')
     }
 
-    search(search) {
+    async search(search) {
         this.setState({refreshing: true});
-        searchCompany(search, global["jwt"])
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({
-                    companies: responseJson['data'],
+        await (Promise.all([searchCompany(search, global["jwt"]).then(response => response.json()),
+                getShareholderByUser(global["userId"], global["jwt"]).then(response => response.json())])
+                .then(([companyJson, shareholderJson]) => {
+                    const companies = companyJson.data;
+                    const shareholders = shareholderJson.data;
+                    const mergeCompanies = companies.map(comp => {
+                        const {userProfileId, shareholderId, shareholderType} = shareholders.find(s => s.companyId === comp.companyId);
+                        return {
+                            ...comp,
+                            userProfileId,
+                            shareholderId,
+                            shareholderType
+                        }
+                    });
+                    this.setState({companies: mergeCompanies})
                 })
-
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-            .done(() => this.setState({refreshing: false}))
-
+        );
+        for await (const comp of this.state.companies) {
+            await (getUserShareAccountInCompany(comp.companyId, global["userId"], global["jwt"])
+                    .then(response => response.json())
+                    .then(json => {
+                        const companies = this.state.companies.map(c => {
+                            if (c.companyId === comp.companyId) {
+                                return {
+                                    ...c,
+                                    shareAccounts: json.data
+                                }
+                            } else {
+                                return c
+                            }
+                        });
+                        this.setState({companies})
+                    })
+            )
+        }
+        this.setState({refreshing: false});
     }
 
     renderCard(item) {
+        const standard = item.shareAccounts !== undefined ? item.shareAccounts.find(acc => acc.name === 'Standard') : undefined;
+        const restricted = item.shareAccounts !== undefined ? item.shareAccounts.find(acc => acc.name === 'Restricted') : undefined;
         return (
             <View>
-                <Card style={{ borderRadius: 10 }} pointerEvents="none">
-                    <CardItem header bordered style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
-                        <Text>{item.companyName}</Text>
+                <Card style={{borderRadius: 10}} pointerEvents="none">
+                    <CardItem header bordered style={{borderTopLeftRadius: 10, borderTopRightRadius: 10}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Avatar size={"medium"} source={{uri: item.photoUrl}}/>
+                            <View style={{marginLeft: "5%", justifyContent: 'space-between'}}>
+                                <Text>
+                                    {item.companyName}
+                                </Text>
+                                <Text>
+                                    {item.address}
+                                </Text>
+                            </View>
+                        </View>
                     </CardItem>
-                    <CardItem bordered>
-                        <Body>
-                            <Text>
-                                {item.companyDescription}
-                            </Text>
-                        </Body>
-                    </CardItem>
-                    <CardItem footer bordered style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                        <Body>
-                            <Text>
-                                <Icons.FontAwesome name={'phone'} /> {item.phone}
-                            </Text>
-                            <Text>
-                                <Icons.MaterialIcons name={'place'} /> {item.address}
-                            </Text>
-                        </Body>
-                    </CardItem>
+                    {
+                        standard !== undefined &&
+                        <CardItem bordered style={{
+                            borderTopLeftRadius: 10,
+                            borderTopRightRadius: 10,
+                            justifyContent: 'space-between'
+                        }}>
+                            <Body>
+                                <Text style={{color: 'green', fontWeight: 'bold', marginBottom: "1%"}}>
+                                    Standard Account
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
+                                    <Text style={{
+                                        alignItems: 'flex-end',
+                                        flex: 1,
+                                        textAlign: 'right'
+                                    }}>{standard.shareAmount} ({standard.shareAmountRatio}%)</Text>
+                                </View>
+                            </Body>
+                        </CardItem>
+                    }
+                    {
+                        restricted !== undefined &&
+                        <CardItem footer bordered style={{borderBottomLeftRadius: 10, borderBottomRightRadius: 10}}>
+                            <Body>
+                                <Text style={{color: 'orange', fontWeight: 'bold', marginBottom: "1%"}}>
+                                    Restricted Account
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
+                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>
+                                        {restricted.shareAmount}
+                                    </Text>
+                                </View>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Convertible</Text>
+                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>
+                                        {restricted.ratioConvert}% at {restricted.timeConvert}
+                                    </Text>
+                                </View>
+                            </Body>
+                        </CardItem>
+                    }
                 </Card>
             </View>
         );
@@ -114,7 +179,7 @@ export default class HomeScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {Platform.OS === 'ios' ? <View style={{height: 20, backgroundColor: "#007FFA" }}>
+                {Platform.OS === 'ios' ? <View style={{height: 20, backgroundColor: "#007FFA"}}>
                     <StatusBar translucent backgroundColor={{backgroundColor: "#007FFA"}} barStyle={"light-content"}/>
                 </View> : <StatusBar/>}
                 <SearchBar
@@ -154,7 +219,7 @@ const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 shadowColor: 'black',
-                shadowOffset: { width: 0, height: -3 },
+                shadowOffset: {width: 0, height: -3},
                 shadowOpacity: 0.1,
                 shadowRadius: 3,
             },
