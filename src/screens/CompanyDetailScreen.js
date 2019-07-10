@@ -10,15 +10,12 @@ import {
     FlatList
 } from 'react-native'
 import {Body, Card, CardItem, Icon, Item, Tab, TabHeading, Tabs, Accordion} from "native-base";
-import {getUser} from "../services/UserService";
 import {getRoundByCompany} from "../services/RoundServices";
 import {getRoundInvestorByRound} from "../services/RoundInvestorService";
 import colors from "../values/Colors";
-import * as Icons from "@expo/vector-icons";
-import {ListItem} from "react-native-elements";
+import {Avatar, ListItem} from "react-native-elements";
 import Chevron from "../components/Chevron";
-import InfoText from "../components/InfoText";
-import {ScrollView} from "react-navigation";
+import Numeral from 'numeral';
 
 
 export default class CompanyDetailScreen extends Component {
@@ -36,27 +33,35 @@ export default class CompanyDetailScreen extends Component {
     }
 
     async componentDidMount(): void {
-        this.setState({refreshing: true});
-        await this.refresh();
-        this.setState({refreshing: false});
-        for (let i = 0; i < this.state.rounds.length; i++) {
-            getRoundInvestorByRound(this.state.rounds[i].roundId, global["jwt"])
-                .then(response => response.json())
-                .then(investorsJson => {
-                    const roundsCopy = Object.assign([], this.state.rounds);
-                    roundsCopy[i].roundInvestors = [...investorsJson.data];
-                    this.setState({rounds: roundsCopy})
-                });
-        }
+        await this.getRounds();
     }
 
-    refresh = async () => {
-        await getRoundByCompany(this.state.company.companyId, global["jwt"])
+    getRounds = async () => {
+        this.setState({refreshing: true});
+        await (getRoundByCompany(this.state.company.companyId, global["jwt"])
             .then(response => response.json())
             .then(json => {
                 this.setState({rounds: json.data});
             })
-            .catch(error => console.log(error));
+            .catch(error => console.log(error)));
+        for await (const round of this.state.rounds) {
+            await (getRoundInvestorByRound(round.roundId, global["jwt"])
+                .then(response => response.json())
+                .then(investorsJson => {
+                    const rounds = this.state.rounds.map(r => {
+                        if (r.roundId === round.roundId) {
+                            return {
+                                ...r,
+                                roundInvestors: [...investorsJson.data]
+                            }
+                        } else {
+                            return r
+                        }
+                    });
+                    this.setState({rounds})
+                }));
+        }
+        this.setState({refreshing: false});
     };
 
     renderCard(item) {
@@ -70,10 +75,10 @@ export default class CompanyDetailScreen extends Component {
                         <Body>
                             <Text>{new Date(item.roundDate).toLocaleString()}</Text>
                             <Text>
-                                Pre-round shares: {item.preRoundShares}
+                                Money raised: {item.moneyRaised}
                             </Text>
                             <Text>
-                                Post-round shares: {item.postRoundShares}
+                                Share increased: {item.shareIncreased}
                             </Text>
                         </Body>
                     </CardItem>
@@ -82,82 +87,96 @@ export default class CompanyDetailScreen extends Component {
         );
     }
 
+    _totalRoundAmount = (arr) => {
+        if (arr !== undefined && arr.length > 0) {
+            return arr.reduce((acc, entry) => acc + (entry.moneyRaised || 0), 0);
+        }
+    };
+
+    _formatCurrency = (val) => {
+        return Numeral(val).format('($ 0.00 a)');
+    };
+
+    _formatVolume = (val) => {
+        return Numeral(val).format('0.00 a');
+    };
+
     render() {
+        const {navigation} = this.props;
         return (
-            <ScrollView style={styles.container}>
-                <Text style={[styles.company]}>{this.state.company.companyName} </Text>
-                <View style={{flex: 1}}>
-                    <InfoText text={"Your Shareholding Status"}/>
-                    <Card style={{borderRadius: 10}} pointerEvents="none">
-                        <CardItem bordered style={{borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'space-between'}}>
+            <View style={styles.container}>
+                <View>
+                    <Card pointerEvents="none">
+                        <CardItem header bordered>
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <Avatar size={"medium"} source={{uri: this.state.company.photoUrl}}/>
+                                <View style={{paddingLeft: "5%", justifyContent: 'space-between'}}>
+                                    <Text>
+                                        {this.state.company.companyName}
+                                    </Text>
+                                    <Text>
+                                        {this.state.company.address}
+                                    </Text>
+                                </View>
+                            </View>
+                        </CardItem>
+                        <CardItem bordered>
                             <Body>
-                                <Text style={{color: 'green', fontWeight: 'bold', marginBottom: "1%"}}>
-                                    Standard Account
-                                </Text>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
-                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>2000 (5%)</Text>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{flex: 1, alignItems: 'flex-start'}}>
+                                        Founder
+                                    </Text>
+                                    <Text style={{flex: 1, alignItems: 'flex-end', textAlign: 'right'}}>
+                                        {this.state.company.adminName}
+                                    </Text>
+                                </View>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{flex: 1, alignItems: 'flex-start'}}>
+                                        Categories
+                                    </Text>
+                                    <Text style={{flex: 1, alignItems: 'flex-end', textAlign: 'right'}}>
+                                        {this.state.company.categories}
+                                    </Text>
                                 </View>
                             </Body>
                         </CardItem>
-                        <CardItem footer bordered style={{borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'space-between'}}>
+                        <CardItem footer bordered>
                             <Body>
-                                <Text style={{color: 'orange', fontWeight: 'bold', marginBottom: "1%"}}>
-                                    Restricted Account
-                                </Text>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Shareholding Volume</Text>
-                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>2000 (5%)</Text>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{flex: 1, alignItems: 'flex-start'}}>
+                                        Capital
+                                    </Text>
+                                    <Text style={{flex: 1, alignItems: 'flex-end', textAlign: 'right'}}>
+                                        {this._formatCurrency(this.state.company.capital)}
+                                    </Text>
                                 </View>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={{alignItems: 'flex-start', flex: 1}}>Convertible</Text>
-                                    <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>50% at Mar 25 2020</Text>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{flex: 1, alignItems: 'flex-start'}}>
+                                        Shares Volume
+                                    </Text>
+                                    <Text style={{flex: 1, alignItems: 'flex-end', textAlign: 'right'}}>
+                                        {this._formatVolume(this.state.company.totalShares)}
+                                    </Text>
                                 </View>
                             </Body>
                         </CardItem>
                     </Card>
                 </View>
-                <InfoText text={"Information"}/>
-                <View style={styles.information}>
-                    <ListItem title={"Founder"}
-                              rightTitle={this.state.company.adminName}
-                              containerStyle={styles.listItemContainer}
-                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
-                    />
+                <View>
                     <ListItem title={"Funding Rounds"}
                               rightTitle={`${this.state.rounds.length}`}
                               containerStyle={styles.listItemContainer}
                               titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                              onPress={() => navigation.push('Round', {rounds: this.state.rounds})}
                               rightIcon={<Chevron/>}
                     />
                     <ListItem title={"Total Funding Amount"}
-                              rightTitle={`5000000`}
                               containerStyle={styles.listItemContainer}
+                              rightTitle={`${this._formatCurrency(this._totalRoundAmount(this.state.rounds))}`}
                               titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
-                    />
-                    <ListItem title={"Capital"}
-                              rightTitle={this.state.company.capital}
-                              containerStyle={styles.listItemContainer}
-                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
-                    />
-                    <ListItem title={"Shares Volume"}
-                              rightTitle={this.state.company.totalShares}
-                              containerStyle={styles.listItemContainer}
-                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
-                    />
-                    <ListItem title={"Phone"}
-                              rightTitle={this.state.company.phone}
-                              containerStyle={styles.listItemContainer}
-                              titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
-                    />
-                    <Accordion dataArray={[
-                        {title: 'Address', content: this.state.company.address},
-                        {title: 'Description', content: this.state.company.companyDescription}
-                    ]}
-                               headerStyle={{backgroundColor: "#fff"}}
                     />
                 </View>
-            </ScrollView>
+            </View>
         );
     }
 
@@ -180,23 +199,6 @@ export default class CompanyDetailScreen extends Component {
             );
         }
     };
-
-    TabRounds() {
-        return (
-            <FlatList keyExtractor={item => item.roundId}
-                      data={this.state.rounds}
-                      renderItem={this._renderItem}
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.refresh}
-            />
-        )
-    }
-
-    TabShareholders() {
-        return (
-            <Text>This is Shareholders Tab</Text>
-        )
-    }
 }
 
 const styles = StyleSheet.create({
@@ -205,10 +207,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#F4F5F4"
     },
     information: {
-        flex: 3,
         marginLeft: "1%",
         marginRight: "1%",
-        marginBottom: "1%",
     },
     infoText: {
         fontFamily: 'Roboto',

@@ -3,25 +3,21 @@ import React, {Component} from 'react';
 import {SearchBar, ListItem, Icon, Avatar} from 'react-native-elements'
 import * as SecureStore from 'expo-secure-store';
 import {Container, Header, Content, Card, CardItem, Text, Body, Spinner} from "native-base";
-import * as Icons from "@expo/vector-icons";
+import moment from 'moment';
+import Numeral from 'numeral';
 import {
-    Image,
     Platform,
-    ScrollView,
     StyleSheet,
     TouchableOpacity,
     TouchableNativeFeedback,
     FlatList,
-    Animated,
-    TextInput,
     StatusBar,
-    Button,
     View,
 } from 'react-native';
 import colors from "../values/Colors";
 import {searchCompany} from "../services/CompanyService";
-import {getShareholder, getShareholderByCompany, getShareholderByUser} from "../services/ShareholderService";
-import {getShareAccountByShareholder, getUserShareAccountInCompany} from "../services/ShareAccountService";
+import {getShareholderByUser} from "../services/ShareholderService";
+import {getUserShareAccountInCompany} from "../services/ShareAccountService";
 
 
 export default class HomeScreen extends Component {
@@ -64,7 +60,7 @@ export default class HomeScreen extends Component {
                             shareholderType
                         }
                     });
-                    this.setState({companies: mergeCompanies})
+                    this.setState({companies: mergeCompanies});
                 })
         );
         for await (const comp of this.state.companies) {
@@ -88,6 +84,14 @@ export default class HomeScreen extends Component {
         this.setState({refreshing: false});
     }
 
+    _formatPercentage = (val) => {
+        return Numeral(val/100).format('0.[000]%');
+    };
+
+    _formatDate = (val) => {
+        return moment(val).format('MMM. DD YYYY');
+    };
+
     renderCard(item) {
         const standard = item.shareAccounts !== undefined ? item.shareAccounts.find(acc => acc.name === 'Standard') : undefined;
         const restricted = item.shareAccounts !== undefined ? item.shareAccounts.find(acc => acc.name === 'Restricted') : undefined;
@@ -97,7 +101,7 @@ export default class HomeScreen extends Component {
                     <CardItem header bordered style={{borderTopLeftRadius: 10, borderTopRightRadius: 10}}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <Avatar size={"medium"} source={{uri: item.photoUrl}}/>
-                            <View style={{marginLeft: "5%", justifyContent: 'space-between'}}>
+                            <View style={{paddingLeft: "5%", justifyContent: 'space-between'}}>
                                 <Text>
                                     {item.companyName}
                                 </Text>
@@ -124,7 +128,7 @@ export default class HomeScreen extends Component {
                                         alignItems: 'flex-end',
                                         flex: 1,
                                         textAlign: 'right'
-                                    }}>{standard.shareAmount} ({standard.shareAmountRatio}%)</Text>
+                                    }}>{standard.shareAmount} ({this._formatPercentage(standard.shareAmountRatio)})</Text>
                                 </View>
                             </Body>
                         </CardItem>
@@ -145,7 +149,7 @@ export default class HomeScreen extends Component {
                                 <View style={{flexDirection: 'row'}}>
                                     <Text style={{alignItems: 'flex-start', flex: 1}}>Convertible</Text>
                                     <Text style={{alignItems: 'flex-end', flex: 1, textAlign: 'right'}}>
-                                        {restricted.ratioConvert}% at {restricted.timeConvert}
+                                        {this._formatPercentage(restricted.ratioConvert)} at {this._formatDate(restricted.timeConvert)}
                                     </Text>
                                 </View>
                             </Body>
@@ -169,7 +173,10 @@ export default class HomeScreen extends Component {
             return (
                 <TouchableNativeFeedback key={item.companyId}
                                          onPress={() => navigation.push('CompanyDetails', {company: item})}
-                                         useForeground={true}>
+                                         useForeground={true}
+                                         delayPressIn={50}
+                                         delayPressOut={50}
+                >
                     {this.renderCard(item)}
                 </TouchableNativeFeedback>
             );
@@ -179,9 +186,11 @@ export default class HomeScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {Platform.OS === 'ios' ? <View style={{height: 20, backgroundColor: "#007FFA"}}>
+                {Platform.OS === 'ios' &&
+                <View style={{height: 20, backgroundColor: "#007FFA"}}>
                     <StatusBar translucent backgroundColor={{backgroundColor: "#007FFA"}} barStyle={"light-content"}/>
-                </View> : <StatusBar/>}
+                </View>
+                }
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
                     placeholder={"Search company ..."}
