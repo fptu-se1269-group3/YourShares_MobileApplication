@@ -12,6 +12,7 @@ import colors from "../values/Colors";
 import CompanyDetailScreen from "../screens/CompanyDetailScreen";
 import RoundDetailScreen from "../screens/RoundDetailScreen";
 import RequestTransactionScreen from "../screens/RequestTransactionScreen";
+import QRScreen from "../screens/QRScreen";
 
 const config = Platform.select({
     web: { headerMode: 'screen' },
@@ -64,7 +65,8 @@ const ProfileStack = createStackNavigator(
         Profile: ProfileScreen,
         Settings: SettingsScreen,
         QRScan: QRCodeScanScreen,
-        RequestTransaction: RequestTransactionScreen
+        RequestTransaction: RequestTransactionScreen,
+        QRScreen: QRScreen
     },
     config
 );

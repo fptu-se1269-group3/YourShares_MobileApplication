@@ -71,16 +71,16 @@ export default class ProfileScreen extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <ScrollView style={styles.scroll}>
-                    <View style={styles.userRow}>
-                        <View style={styles.userImage}>
+                    <View style={styles.userRow} >
+                        <View style={styles.userImage} onPress={()=>navigation.navigate('QRScreen')}>
                             {this.state.photoUrl === null
                                 ? <Avatar rounded size={"medium"} source={require('../assets/images/photo.png')}/>
                                 : <Avatar rounded size={"medium"} source={{uri: this.state.photoUrl}}/>
                             }
                         </View>
                         <View>
-                            <Text style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
-                            <Text
+                            <Text onPress={()=>navigation.navigate('QRScreen')} style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
+                            <Text onPress={()=>navigation.navigate('QRScreen')}
                                 style={{
                                     color: 'gray',
                                     fontSize: 16,

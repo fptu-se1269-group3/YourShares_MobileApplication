@@ -26,9 +26,7 @@ export default class RequestTransactionScreen extends Component {
         await this.getName();
         await this.callAPI(global["userId"]);
         await this.getTransaction();
-        console.log(this.state.arrayCompanyName.length)
         console.log(this.state.arrayShareAccount.length)
-        console.log(this.state.arrayCompanyId.length)
     }
 
     async callAPI(id) {
@@ -67,17 +65,18 @@ export default class RequestTransactionScreen extends Component {
     }
 
     async getTransaction() {
-        if (this.state.selected === "all") {
-            for (let i = 0; i < this.state.arrayShareholder.length; i++) {
-                const response = await fetch('http://api.yourshares.tk/api/share-accounts/shareholders/' + this.state.arrayShareholder[i].shareholderId, {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${global['jwt']}`
-                    },
-                });
-                const responseJson = await response.json();
+        for (let i = 0; i < this.state.arrayShareholder.length; i++) {
+            const response = await fetch('http://api.yourshares.tk/api/share-accounts/shareholders/' + this.state.arrayShareholder[i].shareholderId, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${global['jwt']}`
+                },
+            });
+            const responseJson = await response.json();
+
+            for (let i = 0; i < responseJson['data'].length; i++) {
                 if (responseJson['data'][i] !== undefined) {
                     if (responseJson['data'][i].name === 'Standard') {
                         this.setState({
@@ -93,7 +92,7 @@ export default class RequestTransactionScreen extends Component {
         const picker = [];
         for (let i = 0; i < this.state.arrayCompanyId.length; i++) {
             picker.push(
-                <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={this.state.arrayShareAccount[i]} />
+                <Picker.Item key={this.state.arrayCompanyId[i]} label={this.state.arrayCompanyName[i]} value={i} />
             )
         }
         return picker;
@@ -114,11 +113,31 @@ export default class RequestTransactionScreen extends Component {
         })
     }
 
-    _handleSubmitPress = () => {
-
+    async _handleSubmitPress(){
+        const { navigation } = this.props;
+        const response = await fetch('http://api.yourshares.tk/api/transactions', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${global['jwt']}`
+            },
+            body: JSON.stringify({
+                "message": this.state.message,
+                "receiverProfileId": this.state.receiver,
+                "shareAccountId": this.state.arrayShareAccount[this.state.selected],
+                "companyId": this.state.arrayCompanyId[this.state.selected],
+                "value": this.state.value,
+                "amount": this.state.amount
+            })
+        });
+        const responseJson = await response.json();
+        console.log(responseJson.isSuccess);
+        navigation.navigate('Profile');
     };
 
     render() {
+        
         return (
             <View style={styles.container}>
                 <Form style={styles.form}>
@@ -162,7 +181,7 @@ export default class RequestTransactionScreen extends Component {
                         />
                     </Item>
                     <View style={styles.button}>
-                        <Button title={"Submit"} onPress={this._handleSubmitPress} />
+                        <Button title={"Submit"} onPress={()=>this._handleSubmitPress()} />
                     </View>
                 </Form>
             </View>
