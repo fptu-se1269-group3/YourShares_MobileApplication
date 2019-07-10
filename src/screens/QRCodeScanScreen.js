@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Button ,Alert} from 'react-native';
+import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -21,7 +21,7 @@ export default class BarcodeScannerExample extends React.Component {
 
     render() {
         const { hasCameraPermission, scanned } = this.state;
-        
+
 
         if (hasCameraPermission === null) {
             return <Text>Requesting for camera permission</Text>;
@@ -51,14 +51,14 @@ export default class BarcodeScannerExample extends React.Component {
             'Request transaction with Id ?',
             data,
             [
-              {
-                text: 'Yes',
-                onPress: () => navigation.navigate('Settings'),
-                //onPress: () => Linking.openURL(this.state.lastScannedUrl),
-              },
-              { text: 'No', onPress: () => this.setState({ scanned: false }) },
+                {
+                    text: 'Yes',
+                    onPress: () => navigation.navigate('RequestTransaction', { Id: data }),
+                    //onPress: () => Linking.openURL(this.state.lastScannedUrl),
+                },
+                { text: 'No', onPress: () => this.setState({ scanned: false }) },
             ],
             { cancellable: false }
-          );
+        );
     };
 }

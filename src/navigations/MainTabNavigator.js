@@ -1,6 +1,6 @@
 import React from 'react';
-import {Platform} from 'react-native';
-import {createStackNavigator, createBottomTabNavigator} from 'react-navigation';
+import { Platform } from 'react-native';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
@@ -14,7 +14,7 @@ import RoundDetailScreen from "../screens/RoundDetailScreen";
 import RequestTransactionScreen from "../screens/RequestTransactionScreen";
 
 const config = Platform.select({
-    web: {headerMode: 'screen'},
+    web: { headerMode: 'screen' },
     default: {
         defaultNavigationOptions: {
             headerTintColor: '#fff',
@@ -35,7 +35,7 @@ const HomeStack = createStackNavigator(
     config
 );
 
-HomeStack.navigationOptions = ({navigation}) => {
+HomeStack.navigationOptions = ({ navigation }) => {
     let tabBarVisible = true;
     if (navigation.state.index > 0) {
         tabBarVisible = false
@@ -43,7 +43,7 @@ HomeStack.navigationOptions = ({navigation}) => {
     return {
         tabBarLabel: 'Home',
         header: null,
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
             <TabBarIcon
                 type={'ionic'}
                 focused={focused}
@@ -63,19 +63,20 @@ const ProfileStack = createStackNavigator(
     {
         Profile: ProfileScreen,
         Settings: SettingsScreen,
-        QRScan: QRCodeScanScreen
+        QRScan: QRCodeScanScreen,
+        RequestTransaction: RequestTransactionScreen
     },
     config
 );
 
-ProfileStack.navigationOptions = ({navigation}) => {
+ProfileStack.navigationOptions = ({ navigation }) => {
     let tabBarVisible = true;
     if (navigation.state.index > 0) {
         tabBarVisible = false
     }
     return {
         tabBarLabel: 'Profile',
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
             <TabBarIcon
                 type={'material'}
                 focused={focused}
@@ -96,11 +97,11 @@ const TransactionsStack = createStackNavigator(
 
 TransactionsStack.navigationOptions = {
     tabBarLabel: 'Transactions',
-    tabBarIcon: ({focused}) => (
+    tabBarIcon: ({ focused }) => (
         <TabBarIcon
             type={'materialcom'}
             focused={focused}
-            name={'bank-transfer'}/>
+            name={'bank-transfer'} />
     )
 };
 
@@ -110,7 +111,7 @@ const tabNavigator = createBottomTabNavigator({
     Transactions: TransactionsStack,
     Profile: ProfileStack,
 }, {
-    initialRouteName: 'Home'
-});
+        initialRouteName: 'Home'
+    });
 
 export default tabNavigator;
