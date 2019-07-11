@@ -84,13 +84,9 @@ export default class HomeScreen extends Component {
         this.setState({refreshing: false});
     }
 
-    _formatPercentage = (val) => {
-        return Numeral(val/100).format('0.[000]%');
-    };
+    _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
 
-    _formatDate = (val) => {
-        return moment(val).format('MMM. DD YYYY');
-    };
+    _formatDate = (val) => moment(val).format('MMM. DD YYYY');
 
     renderCard(item) {
         const standard = item.shareAccounts !== undefined ? item.shareAccounts.find(acc => acc.name === 'Standard') : undefined;
