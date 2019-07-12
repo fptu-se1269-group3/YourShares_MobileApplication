@@ -1,0 +1,120 @@
+import React, {Component} from 'react';
+import {View, Button, FlatList, StyleSheet} from "react-native";
+import moment from "moment";
+import {Body, Card, CardItem, Text, Left, Right} from "native-base";
+import colors from "../values/Colors";
+import Modal from "react-native-modal";
+import {Avatar} from "react-native-elements";
+
+export default class RoundScreen extends Component {
+    static navigationOptions = {
+        title: 'Rounds'
+    };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            rounds: props.navigation.getParam('rounds'),
+            roundInvestors: [],
+            isModalVisible: false,
+        }
+    }
+
+    _renderRoundItem = ({item}) => {
+        return (
+            <Card>
+                <CardItem bordered style={{borderWidth: 1}} button
+                          onPress={() => {
+                              if (item.roundInvestors.length > 0) {
+                                  this.setState({roundInvestors: item.roundInvestors});
+                                  this.setState({isModalVisible: true});
+                              }
+                          }}>
+                    <Body style={{alignItems: 'space-between'}}>
+                        <Text style={{color: colors.TEXT_COLOR, alignSelf: 'flex-start', paddingBottom: '2%'}}>
+                            {this._formatDate(item.roundDate)}
+                        </Text>
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={{flex: 1, alignSelf: 'flex-start'}}>
+                                {item.name}
+                            </Text>
+                            <Text style={{textAlign: 'right', flex: 1, alignSelf: 'flex-end', color: 'green'}}>
+                                + {item.moneyRaised}
+                            </Text>
+                        </View>
+                    </Body>
+                </CardItem>
+            </Card>
+        );
+    };
+
+    _renderInvestorItem = ({item}) => {
+        return (
+            <Card style={{borderRadius: 10}} pointerEvents="none">
+                <CardItem header bordered style={{borderTopLeftRadius: 10, borderTopRightRadius: 10}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Avatar size={"medium"} source={{uri: item.photoUrl}}/>
+                        <View style={{paddingLeft: "5%", justifyContent: 'space-between'}}>
+                            <Text>
+                                {item.investorName}
+                            </Text>
+                        </View>
+                    </View>
+                </CardItem>
+            </Card>
+        );
+    };
+
+    _formatDate = (val) => moment(val).format('MMM. DD YYYY');
+
+    _hideModal = () => {
+        this.setState({isModalVisible: false})
+    };
+
+    render() {
+        return (
+            <View>
+                <FlatList keyExtractor={item => item.roundId}
+                          data={this.state.rounds}
+                          renderItem={this._renderRoundItem}
+                />
+                <Modal style={styles.bottomModal}
+                       isVisible={this.state.isModalVisible}
+                       swipeDirection={['up', 'down', 'left', 'right']}
+                       onSwipeComplete={this._hideModal}
+                       onBackButtonPress={this._hideModal}
+                       hasBackdrop={true}
+                       onBackdropPress={this._hideModal}
+                       hideModalContentWhileAnimating={false}
+
+                >
+                    <View style={styles.content}>
+                        <FlatList keyExtractor={item => item.roundInvestorId}
+                                  data={this.state.roundInvestors}
+                                  renderItem={this._renderInvestorItem}
+                        />
+                    </View>
+                </Modal>
+            </View>
+        );
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    bottomModal: {
+        justifyContent: 'flex-end',
+        margin: 0,
+    }
+});

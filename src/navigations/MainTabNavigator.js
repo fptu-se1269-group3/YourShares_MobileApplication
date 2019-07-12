@@ -10,9 +10,9 @@ import QRCodeScanScreen from '../screens/QRCodeScanScreen';
 import TransactionsScreen from "../screens/TransactionsScreen";
 import colors from "../values/Colors";
 import CompanyDetailScreen from "../screens/CompanyDetailScreen";
-import RoundDetailScreen from "../screens/RoundDetailScreen";
 import RequestTransactionScreen from "../screens/RequestTransactionScreen";
 import QRScreen from "../screens/QRScreen";
+import RoundScreen from "../screens/RoundScreen";
 
 const config = Platform.select({
     web: { headerMode: 'screen' },
@@ -31,7 +31,7 @@ const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
         CompanyDetails: CompanyDetailScreen,
-        RoundDetails: RoundDetailScreen
+        Round: RoundScreen,
     },
     config
 );
