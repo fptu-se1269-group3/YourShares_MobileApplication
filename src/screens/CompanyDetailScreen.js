@@ -96,57 +96,57 @@ export default class CompanyDetailScreen extends Component {
                         </View>
                     </CardItem>
                     <CardItem bordered>
-                        <Left>
-                            <Text>Founders</Text>
-                        </Left>
+                        <Body>
+                            <Text style={styles.left}>Founders</Text>
+                        </Body>
                         <Right>
                             <Text style={{textAlign: 'right'}}>{this.state.company.adminName}</Text>
                         </Right>
                     </CardItem>
-                    <CardItem bordered>
-                        <Left>
-                            <Text>Categories</Text>
-                        </Left>
+                    <CardItem bordered >
+                        <Body>
+                            <Text style={styles.left}>Categories</Text>
+                        </Body>
                         <Right>
                             <Text style={{textAlign: 'right'}}>{this.state.company.categories}</Text>
                         </Right>
                     </CardItem>
                     <CardItem bordered>
-                        <Left>
-                            <Text>Capital</Text>
-                        </Left>
+                        <Body>
+                            <Text style={styles.left}>Capital</Text>
+                        </Body>
                         <Right>
-                            <Text>{this._formatCurrency(this.state.company.capital)}</Text>
+                            <Text style={styles.right}>{this._formatCurrency(this.state.company.capital)}</Text>
                         </Right>
                     </CardItem>
                     <CardItem bordered>
-                        <Left>
-                            <Text>Shares Volume</Text>
-                        </Left>
+                        <Body>
+                            <Text style={styles.left}>Shares Volume</Text>
+                        </Body>
                         <Right>
-                            <Text>{this._formatVolume(this.state.company.totalShares)}</Text>
+                            <Text style={styles.right}>{this._formatVolume(this.state.company.totalShares)}</Text>
                         </Right>
                     </CardItem>
                     <CardItem bordered button onPress={this._navigateRound}>
-                        <Left>
-                            <Text>Funding Rounds</Text>
-                        </Left>
-                        <Right style={{flexDirection: 'row', justifyContent: 'center'}}>
-                            <Text style={{flex: 1, textAlign: 'right', paddingRight: "7%"}}>{this.state.rounds.length}</Text>
+                        <Body>
+                            <Text style={styles.left}>Funding Rounds</Text>
+                        </Body>
+                        <Right style={{flexDirection: 'row'}}>
+                            <Text style={[{flex: 1, textAlign: 'right', paddingRight: "7%"}, styles.right]}>{this.state.rounds.length}</Text>
                             <Chevron style={{flex: 1}}/>
                         </Right>
                     </CardItem>
                     <CardItem bordered>
-                        <Left>
-                            <Text>Total Funding Amount</Text>
-                        </Left>
+                        <Body>
+                            <Text style={styles.left}>Total Funding Amount</Text>
+                        </Body>
                         <Right>
-                            <Text>{this._formatCurrency(this._totalRoundAmount(this.state.rounds))}</Text>
+                            <Text style={styles.right}>{this._formatCurrency(this._totalRoundAmount(this.state.rounds))}</Text>
                         </Right>
                     </CardItem>
                     <CardItem bordered>
-                        <Body style={{justifyContent: 'space-between'}}>
-                            <Text>Short Description</Text>
+                        <Body>
+                            <Text style={styles.left}>Short Description</Text>
                             <Text>{this.state.company.companyDescription}</Text>
                         </Body>
                     </CardItem>
@@ -157,5 +157,12 @@ export default class CompanyDetailScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-
+    left: {
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    right: {
+        fontWeight: 'bold',
+        color: colors.TEXT_LINK
+    },
 });
