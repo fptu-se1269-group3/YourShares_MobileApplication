@@ -135,6 +135,7 @@ export default class LoginScreen extends Component {
                         value={this.state.email}
                         onChangeText={(email) => this.setState({email})}
                         placeholder={strings.EMAIL_REGISTER_PLACEHOLDER}
+                        autoCapitalize={'none'}
                     />
                     <FormTextInput
                         value={this.state.password}
