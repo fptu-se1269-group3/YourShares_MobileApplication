@@ -29,6 +29,7 @@ export default class HomeScreen extends Component {
         super(props);
         this.state = {
             search: '',
+            allCompanies: [],
             companies: [],
             refreshing: false
         };
@@ -41,12 +42,12 @@ export default class HomeScreen extends Component {
                 global["jwt"] = jwt;
                 global["userId"] = userId;
             }));
-        this.search('')
+        this.loadCompaniesAsync()
     }
 
-    async search(search) {
+    async loadCompaniesAsync() {
         this.setState({refreshing: true});
-        await (Promise.all([searchCompany(search, global["jwt"]).then(response => response.json()),
+        await (Promise.all([searchCompany('', global["jwt"]).then(response => response.json()),
                 getShareholderByUser(global["userId"], global["jwt"]).then(response => response.json())])
                 .then(([companyJson, shareholderJson]) => {
                     const companies = companyJson.data;
@@ -77,11 +78,21 @@ export default class HomeScreen extends Component {
                                 return c
                             }
                         });
-                        this.setState({companies})
+                        this.setState({companies});
+                        this.setState({allCompanies: companies});
                     })
             )
         }
         this.setState({refreshing: false});
+    }
+
+    async search(search) {
+        const text = search.toUpperCase().split(' ');
+        const companies = this.state.allCompanies.filter(
+            comp => text.every(
+                ele => comp.companyName.toUpperCase().indexOf(ele) > -1
+            ));
+        this.setState({companies});
     }
 
     _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
@@ -193,15 +204,19 @@ export default class HomeScreen extends Component {
                     containerStyle={{backgroundColor: colors.HEADER_LIGHT_BLUE}}
                     onChangeText={(search) => {
                         this.setState({search});
-                        this.search(search);
                     }}
+                    onEndEditing={() => this.search(this.state.search)}
+                    onClear={() => this.search('')}
                     value={this.state.search}
                 />
                 <FlatList keyExtractor={item => item.companyId}
                           data={this.state.companies}
                           renderItem={this._renderItem}
                           refreshing={this.state.refreshing}
-                          onRefresh={() => this.search(this.state.search)}
+                          onRefresh={() => {
+                              this.setState({search: ''});
+                              this.loadCompaniesAsync()
+                          }}
                 />
             </View>
         );
