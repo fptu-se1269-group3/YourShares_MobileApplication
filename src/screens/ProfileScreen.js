@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput} from 'react-native';
-import strings from "../values/Strings";
-import {Avatar, ListItem, Text} from "react-native-elements";
+import {Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput, TouchableHighlight} from 'react-native';
+import {Avatar, Icon, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
-import {SafeAreaView} from "react-navigation";
+import {AntDesign} from "@expo/vector-icons";
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 import colors from "../values/Colors";
 import {getUser, updateUser} from "../services/UserService";
+import TabBarIcon from "../components/TabBarIcon";
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -23,9 +23,18 @@ export default class ProfileScreen extends Component {
         };
     }
 
-    static navigationOptions = {
-        title: "Profile"
-    };
+    static navigationOptions = ({navigation}) => ({
+        title: 'Profile',
+        headerRight: (
+            <TouchableHighlight underlayColor={colors.DODGER_BLUE}
+                                onPress={() => navigation.navigate('QRScreen')}
+                                delayPressIn={0}
+                                delayPressOut={0}
+            >
+                <AntDesign name={'qrcode'} size={30}/>
+            </TouchableHighlight>
+        )
+    });
 
     componentDidMount() {
         this.getInfo();
@@ -69,22 +78,23 @@ export default class ProfileScreen extends Component {
     render() {
         const {navigation} = this.props;
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <ScrollView style={styles.scroll}>
-                    <View style={styles.userRow} >
-                        <View style={styles.userImage} onPress={()=>navigation.navigate('QRScreen')}>
+                    <View style={styles.userRow}>
+                        <View style={styles.userImage}>
                             {this.state.photoUrl === null
                                 ? <Avatar rounded size={"medium"} source={require('../assets/images/photo.png')}/>
                                 : <Avatar rounded size={"medium"} source={{uri: this.state.photoUrl}}/>
                             }
                         </View>
                         <View>
-                            <Text onPress={()=>navigation.navigate('QRScreen')} style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
-                            <Text onPress={()=>navigation.navigate('QRScreen')}
-                                style={{
-                                    color: 'gray',
-                                    fontSize: 16,
-                                }}
+                            <Text onPress={() => navigation.navigate('QRScreen')}
+                                  style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
+                            <Text onPress={() => navigation.navigate('QRScreen')}
+                                  style={{
+                                      color: 'gray',
+                                      fontSize: 16,
+                                  }}
                             >
                                 {this.state.email}
                             </Text>
@@ -211,7 +221,7 @@ export default class ProfileScreen extends Component {
                     </View>
 
                 </ScrollView>
-            </SafeAreaView>
+            </View>
         );
     }
 }

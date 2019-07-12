@@ -181,8 +181,8 @@ export default class HomeScreen extends Component {
                 <TouchableNativeFeedback key={item.companyId}
                                          onPress={() => navigation.push('CompanyDetails', {company: item})}
                                          useForeground={true}
-                                         delayPressIn={50}
-                                         delayPressOut={50}
+                                         delayPressIn={20}
+                                         delayPressOut={20}
                 >
                     {this.renderCard(item)}
                 </TouchableNativeFeedback>
