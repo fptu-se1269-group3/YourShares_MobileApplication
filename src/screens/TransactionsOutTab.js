@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import {View, Text, TouchableOpacity, TouchableNativeFeedback, Platform, FlatList} from 'react-native';
 import { ScrollView } from 'react-native';
 import { Spinner, Card, CardItem, Body } from "native-base";
 import colors from '../values/Colors'
 import jslinq from 'jslinq';
+import moment from "moment";
+import Numeral from "numeral";
 
 export default class TransactionsOutTab extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            arrayResult: [],
-            firstTime: true,
-        }
-    }
-    componentDidMount(props) {
-        if (this.state.firstTime) {
-            this.setState({
-                arrayResult: this.props.arrayTransaction,
-                firstTime: false
-            });
+            transactions: this.props.arrayTransaction.filter(tr => tr.transactionTypeCode === 'OUT')
         }
     }
 
@@ -35,102 +28,78 @@ export default class TransactionsOutTab extends Component {
             if (this.props.selected === 'all') {
                 myList = this.props.arrayTransaction;
                 queryObj = jslinq(myList)
-                    .where(function (item) {
-                        return item.transactionDate >= fromDate
-                    })
-                    .where(function (item) {
-                        return item.transactionDate <= toDate
-                    }).orderByDescending(function (item)
-                    {
-                        return item.transactionDate
-                    })
+                    .where(item => item.transactionDate >= fromDate)
+                    .where(item => item.transactionDate <= toDate)
+                    .where(item => item.transactionTypeCode === 'OUT')
+                    .orderByDescending(item => item.transactionDate)
                     .toList();
-                this.setState({
-                    arrayResult: queryObj
-                });
+                this.setState({transactions: queryObj});
             } else {
                 const shareAccountIds = this.props.arrayShareAccount[this.props.selected];
                 myList = this.props.arrayTransaction;
                 queryObj = jslinq(myList)
-                    .where(function (item) {
-                        return item.shareAccountId === shareAccountIds
-                    })
-                    .where(function (item) {
-                        return item.transactionDate >= fromDate
-                    })
-                    .where(function (item) {
-                        return item.transactionDate <= toDate
-                    }).orderByDescending(function (item)
-                    {
-                        return item.transactionDate
-                    })
+                    .where(item => item.shareAccountId === shareAccountIds)
+                    .where(item => item.transactionDate >= fromDate)
+                    .where(item => item.transactionDate <= toDate)
+                    .where(item => item.transactionTypeCode === 'OUT')
+                    .orderByDescending(item => item.transactionDate)
                     .toList();
-                this.setState({
-                    arrayResult: queryObj,
-                });
+                this.setState({transactions: queryObj});
             }
         }
     }
 
-    renderCard(i) {
+    // from unix timestamp
+    _formatDate = (val) => moment.unix(val).format('MMM. DD YYYY');
+
+    _formatCurrency = (val) => Numeral(val).format('($ 0,0.[00] )');
+
+    _renderItem = ({item}) => {
         return (
-            <View>
-                <Card pointerEvents="none" >
-                    <CardItem bordered style={{borderWidth:1}}>
-                        <Body>
-                            <Text style={{ textAlign: 'right', alignSelf: 'flex-end', color: colors.TEXT_COLOR }}>
-                                ${this.state.arrayResult[i].transactionValue}
+            <Card>
+                <CardItem bordered style={{borderWidth: 1, justifyContent: 'space-between'}}>
+                    <Body>
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={{color: colors.TEXT_COLOR, alignSelf: 'flex-start', flex: 1}}>
+                                {this._formatDate(item.transactionDate)}
                             </Text>
-                            <Text style={{ position: 'relative', top: -14, color: colors.TEXT_COLOR }}>
-                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}      
-                                <Text style={{ color: this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "green" 
-                                            : this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "red":"orange"}}>
-                                {this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "Completed" :  
-                                this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "Rejected":"Pending"}
+                            <Text style={{
+                                color: item.transactionStatusCode === 'CMP' ? "green"
+                                    : item.transactionStatusCode === 'RJ' ? "red" : "orange",
+                                flex: 1, textAlign: 'center'
+                            }}>
+                                {item.transactionStatusCode === 'CMP' ? "Completed" :
+                                    item.transactionStatusCode === 'RJ' ? "Rejected" : "Pending"}
                             </Text>
+                            <Text style={{alignSelf: 'flex-end', flex: 1, textAlign: 'right'}}>
+                                {this._formatCurrency(item.transactionValue)}
                             </Text>
-                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5 }}>
-                                {this.state.arrayResult[i].message}
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={{flex: 2, alignSelf: 'flex-start'}}>
+                                {item.message}
                             </Text>
-                            <Text style={{ color: this.state.arrayResult[i].transactionTypeCode === 'IN' ? "green" : "red", textAlign: 'right', alignSelf: 'flex-end' }}>
-                                {this.state.arrayResult[i].transactionTypeCode === 'IN' ? "+" : "-"}{this.state.arrayResult[i].transactionAmount}
+                            <Text style={{textAlign: 'right', flex: 1, alignSelf: 'flex-end',
+                                color: item.transactionTypeCode === 'IN' ? "green" : "red"}}>
+                                {item.transactionTypeCode === 'IN' ? "+" : "-"}{item.transactionAmount}
                             </Text>
-                        </Body>
-                    </CardItem>
-                </Card>
-            </View>
+                        </View>
+                    </Body>
+                </CardItem>
+            </Card>
         );
-    }
-
-    renderCards() {
-        const card = [];
-        for (let i = 0; i < this.state.arrayResult.length; i++) {
-            if (this.props.arrayTransaction[i].transactionTypeCode === 'OUT') {
-                // if (Platform.OS === 'ios') {
-                if (Platform.OS === 'ios') {
-                    card.push(
-                        <TouchableOpacity key={this.state.arrayResult[i].transactionId}>
-                            {this.renderCard(i)}
-                        </TouchableOpacity>
-                    )
-                } else {
-                    card.push(
-                        <TouchableNativeFeedback key={this.state.arrayResult[i].transactionId} useForeground={true}>
-                            {this.renderCard(i)}
-                        </TouchableNativeFeedback>
-                    )
-                }
-            }
-        }
-        return card;
     };
 
     render() {
         return (
-            <ScrollView>
-                {this.props.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={{marginTop: '50%', paddingBottom: '10%'}}/>}
-                {this.renderCards()}
-            </ScrollView>
+            <View>
+                {this.props.isLoading &&
+                <Spinner color={colors.HEADER_LIGHT_BLUE} style={{marginTop: '30%', paddingBottom: '10%'}}/>}
+                <FlatList keyExtractor={(item) => item.transactionId}
+                          data={this.state.transactions}
+                          renderItem={this._renderItem}
+                />
+            </View>
         );
     }
 }

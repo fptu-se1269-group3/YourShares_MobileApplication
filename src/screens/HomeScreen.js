@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser';
 import React, {Component} from 'react';
 import {SearchBar, ListItem, Icon, Avatar} from 'react-native-elements'
 import * as SecureStore from 'expo-secure-store';
@@ -86,8 +85,8 @@ export default class HomeScreen extends Component {
         this.setState({refreshing: false});
     }
 
-    async search(search) {
-        const text = search.toUpperCase().split(' ');
+    async search(searchValue) {
+        const text = searchValue.toUpperCase().split(' ');
         const companies = this.state.allCompanies.filter(
             comp => text.every(
                 ele => comp.companyName.toUpperCase().indexOf(ele) > -1
@@ -97,6 +96,7 @@ export default class HomeScreen extends Component {
 
     _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
 
+    // from datetime string
     _formatDate = (val) => moment(val).format('MMM. DD YYYY');
 
     renderCard(item) {

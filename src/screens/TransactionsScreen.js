@@ -18,7 +18,7 @@ export default class TransactionsScreen extends Component {
         super(props);
         this.state = {
             selected: 'all',
-            date2: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
+            date2: `${new Date().getDate() + 1}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
             date: undefined,
             arrayCompanyId: [],
             arrayCompanyName: [],
@@ -226,17 +226,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-    },
-    userRow: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        paddingBottom: 8,
-        paddingLeft: 15,
-        paddingRight: 15,
-        paddingTop: 6,
-    },
-    userImage: {
-        marginRight: 12,
     },
     listItemContainer: {
         height: 55,
