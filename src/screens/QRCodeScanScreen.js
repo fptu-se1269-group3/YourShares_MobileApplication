@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import StringValue from '../values/Strings';
 
 export default class BarcodeScannerExample extends React.Component {
     state = {
@@ -47,18 +48,9 @@ export default class BarcodeScannerExample extends React.Component {
     handleBarCodeScanned = ({ type, data }) => {
         const { navigation } = this.props;
         this.setState({ scanned: true });
-        Alert.alert(
-            'Request transaction with Id ?',
-            data,
-            [
-                {
-                    text: 'Yes',
-                    onPress: () => navigation.navigate('RequestTransaction', { Id: data }),
-                    //onPress: () => Linking.openURL(this.state.lastScannedUrl),
-                },
-                { text: 'No', onPress: () => this.setState({ scanned: false }) },
-            ],
-            { cancellable: false }
-        );
+        if(data.split("+")[0]==StringValue.PREFIX_QR){
+            navigation.navigate('RequestTransaction', { Id: data.split("+")[1] })
+        }
+        this.setState({ scanned: false })
     };
 }

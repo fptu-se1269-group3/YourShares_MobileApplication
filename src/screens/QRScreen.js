@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import QRCode from 'react-native-qrcode';
+import StringValue from '../values/Strings';
 
 import { StyleSheet, View, TextInput } from 'react-native';
 
@@ -17,7 +18,7 @@ export default class QRScreen extends Component {
           value={this.state.text}
         />
         <QRCode
-          value={global["userId"]}
+          value={StringValue.PREFIX_QR +"+"+ global["userId"]}
           size={200}
           bgColor='black'
           fgColor='white'/>

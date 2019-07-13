@@ -18,14 +18,14 @@ export default class TransactionsOutTab extends Component {
         if (this.state.firstTime) {
             this.setState({
                 arrayResult: this.props.arrayTransaction,
-                firstTime:false
+                firstTime: false
             });
         }
     }
 
     componentDidUpdate(oldProps) {
-        let queryObj;
         let myList;
+        let queryObj;
         const newProps = this.props;
         if (oldProps.selected !== newProps.selected || oldProps.date !== newProps.date || oldProps.date2 !== newProps.date2) {
             const fromDate = this.props.date !== undefined ? new Date(this.props.date.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")).getTime() / 1000.0 : 0;
@@ -35,14 +35,20 @@ export default class TransactionsOutTab extends Component {
             if (this.props.selected === 'all') {
                 myList = this.props.arrayTransaction;
                 queryObj = jslinq(myList)
-                    .where(function (item) { return item.transactionDate >= fromDate })
-                    .where(function (item) { return item.transactionDate <= toDate })
+                    .where(function (item) {
+                        return item.transactionDate >= fromDate
+                    })
+                    .where(function (item) {
+                        return item.transactionDate <= toDate
+                    }).orderByDescending(function (item)
+                    {
+                        return item.transactionDate
+                    })
                     .toList();
                 this.setState({
                     arrayResult: queryObj
                 });
-            }
-            else {
+            } else {
                 const shareAccountIds = this.props.arrayShareAccount[this.props.selected];
                 myList = this.props.arrayTransaction;
                 queryObj = jslinq(myList)
@@ -54,6 +60,9 @@ export default class TransactionsOutTab extends Component {
                     })
                     .where(function (item) {
                         return item.transactionDate <= toDate
+                    }).orderByDescending(function (item)
+                    {
+                        return item.transactionDate
                     })
                     .toList();
                 this.setState({
@@ -73,10 +82,15 @@ export default class TransactionsOutTab extends Component {
                                 ${this.state.arrayResult[i].transactionValue}
                             </Text>
                             <Text style={{ position: 'relative', top: -14, color: colors.TEXT_COLOR }}>
-                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}
+                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}      
+                                <Text style={{ color: this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "green" 
+                                            : this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "red":"orange"}}>
+                                {this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "Completed" :  
+                                this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "Rejected":"Pending"}
                             </Text>
-                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5, color: colors.TEXT_COLOR }}>
-                                Deal share with John Adam
+                            </Text>
+                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5 }}>
+                                {this.state.arrayResult[i].message}
                             </Text>
                             <Text style={{ color: this.state.arrayResult[i].transactionTypeCode === 'IN' ? "green" : "red", textAlign: 'right', alignSelf: 'flex-end' }}>
                                 {this.state.arrayResult[i].transactionTypeCode === 'IN' ? "+" : "-"}{this.state.arrayResult[i].transactionAmount}

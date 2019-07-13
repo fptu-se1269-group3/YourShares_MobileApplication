@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput, TouchableHighlight} from 'react-native';
 import {Avatar, Icon, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
-import {AntDesign} from "@expo/vector-icons";
+import {AntDesign,Ionicons} from "@expo/vector-icons";
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 import colors from "../values/Colors";
@@ -27,11 +27,11 @@ export default class ProfileScreen extends Component {
         title: 'Profile',
         headerRight: (
             <TouchableHighlight underlayColor={colors.DODGER_BLUE}
-                                onPress={() => navigation.navigate('QRScreen')}
+                                onPress={() => navigation.navigate('QRScan')}
                                 delayPressIn={0}
                                 delayPressOut={0}
             >
-                <AntDesign name={'qrcode'} size={30}/>
+                <Ionicons style={{marginRight:10}} name={'md-qr-scanner'} size={30}/>
             </TouchableHighlight>
         )
     });
@@ -200,6 +200,16 @@ export default class ProfileScreen extends Component {
                         />
                         <InfoText text={"Settings"}/>
                         <ListItem
+                            title="My QR Code"
+                            titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
+                            containerStyle={styles.listItemContainer}
+                            onPress={() => navigation.navigate('QRScreen')}
+                            leftIcon={
+                                <AntDesign name={'qrcode'} size={30}/>
+                            }
+                            rightIcon={<Chevron/>}
+                        />
+                        <ListItem
                             title="App settings"
                             titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
@@ -215,7 +225,7 @@ export default class ProfileScreen extends Component {
                             }
                             rightIcon={<Chevron/>}
                         />
-
+                        
                     </View>
 
                 </ScrollView>

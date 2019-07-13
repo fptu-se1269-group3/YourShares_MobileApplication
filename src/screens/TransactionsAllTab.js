@@ -32,6 +32,9 @@ export default class TransactionsAllTab extends Component {
                     })
                     .where(function (item) {
                         return item.transactionDate <= toDate
+                    }).orderByDescending(function (item)
+                    {
+                        return item.transactionDate
                     })
                     .toList();
                 this.setState({
@@ -49,6 +52,9 @@ export default class TransactionsAllTab extends Component {
                     })
                     .where(function (item) {
                         return item.transactionDate <= toDate
+                    }).orderByDescending(function (item)
+                    {
+                        return item.transactionDate
                     })
                     .toList();
                 this.setState({
@@ -56,8 +62,14 @@ export default class TransactionsAllTab extends Component {
                 });
             }
         } else if (!this.props.isLoading && this.state.firstTime) {
+            let list = this.props.arrayTransaction;
+            let queryObj = jslinq(list).orderByDescending(function (item)
+            {
+                return item.transactionDate
+            })
+            .toList();
             this.setState({
-                arrayResult: this.props.arrayTransaction,
+                arrayResult: queryObj,
                 firstTime: false
             });
 
@@ -75,10 +87,15 @@ export default class TransactionsAllTab extends Component {
                                 ${this.state.arrayResult[i].transactionValue}
                             </Text>
                             <Text style={{ position: 'relative', top: -14, color: colors.TEXT_COLOR }}>
-                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}
+                                {new Date(this.state.arrayResult[i].transactionDate * 1000).toLocaleString()}      
+                                <Text style={{ color: this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "green" 
+                                            : this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "red":"orange"}}>
+                                {this.state.arrayResult[i].transactionStatusCode === 'CMP' ? "Completed" :  
+                                this.state.arrayResult[i].transactionStatusCode === 'RJ' ? "Rejected":"Pending"}
                             </Text>
-                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5, color: colors.TEXT_COLOR }}>
-                                Deal share with John Adam
+                            </Text>
+                            <Text style={{ position: 'absolute', bottom: 3, fontSize: 15.5 }}>
+                                {this.state.arrayResult[i].message}
                             </Text>
                             <Text style={{ color: this.state.arrayResult[i].transactionTypeCode === 'IN' ? "green" : "red", textAlign: 'right', alignSelf: 'flex-end' }}>
                                 {this.state.arrayResult[i].transactionTypeCode === 'IN' ? "+" : "-"}{this.state.arrayResult[i].transactionAmount}
