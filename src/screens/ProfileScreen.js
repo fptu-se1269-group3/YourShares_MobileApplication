@@ -88,10 +88,8 @@ export default class ProfileScreen extends Component {
                             }
                         </View>
                         <View>
-                            <Text onPress={() => navigation.navigate('QRScreen')}
-                                  style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
-                            <Text onPress={() => navigation.navigate('QRScreen')}
-                                  style={{
+                            <Text style={{fontSize: 16}}>{this.state.firstName} {this.state.lastName}</Text>
+                            <Text style={{
                                       color: 'gray',
                                       fontSize: 16,
                                   }}

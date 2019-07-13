@@ -59,7 +59,7 @@ export default class SettingsScreen extends Component {
     render() {
         const { navigation } = this.props;
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <ScrollView style={styles.scroll}>
                     <InfoText text="Security Account" />
                     <View>
@@ -113,7 +113,7 @@ export default class SettingsScreen extends Component {
                         />
                     </View>
                 </ScrollView>
-            </SafeAreaView>
+            </View>
         )
     }
 }

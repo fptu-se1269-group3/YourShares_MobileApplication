@@ -113,10 +113,10 @@ export default class TransactionsInTab extends Component {
 
     render() {
         return (
-            < View>
+            <ScrollView>
                 {this.props.isLoading && <Spinner color={colors.HEADER_LIGHT_BLUE} style={{marginTop: '50%', paddingBottom: '10%'}}/>}
                 {this.renderCards()}
-            </View>
+            </ScrollView>
         );
     }
 }
