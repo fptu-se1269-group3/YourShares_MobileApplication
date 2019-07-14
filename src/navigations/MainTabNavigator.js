@@ -13,6 +13,7 @@ import CompanyDetailScreen from "../screens/CompanyDetailScreen";
 import RequestTransactionScreen from "../screens/RequestTransactionScreen";
 import QRScreen from "../screens/QRScreen";
 import RoundScreen from "../screens/RoundScreen";
+import LocationScreen from "../screens/LocationScreen"
 
 const config = Platform.select({
     web: { headerMode: 'screen' },
@@ -66,7 +67,8 @@ const ProfileStack = createStackNavigator(
         Settings: SettingsScreen,
         QRScan: QRCodeScanScreen,
         RequestTransaction: RequestTransactionScreen,
-        QRScreen: QRScreen
+        QRScreen: QRScreen,
+        LocationScreen: LocationScreen
     },
     config
 );

@@ -186,6 +186,7 @@ export default class ProfileScreen extends Component {
                             titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={this.state.address}
                             rightTitleStyle={{fontSize: 16}}
+                            onPress={() => navigation.navigate('LocationScreen')}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
