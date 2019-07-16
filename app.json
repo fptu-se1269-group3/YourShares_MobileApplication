@@ -2,12 +2,12 @@
   "expo": {
     "name": "Your Shares",
     "slug": "your-shares",
+    "description": "Your Shares application allow shareholders of startup to track their shares and transaction",
     "privacy": "public",
     "sdkVersion": "33.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,16 +28,14 @@
       "bundleIdentifier": "com.fptu.yourshares"
     },
     "android": {
-      "package": "com.fptu.yourshares"
-    },
-    "web": {
-      "build": {
-        "babel": {
-          "include": [
-            "native-base-shoutem-theme"
-          ]
-        }
-      }
+      "package": "com.fptu.yourshares",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "USE_FINGERPRINT",
+        "VIBRATE"
+      ]
     },
     "androidStatusBarColor": "#007FFA",
     "androidStatusBar": {
