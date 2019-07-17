@@ -7,7 +7,6 @@ import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
 import colors from "../values/Colors";
 import {getUser, updateUser} from "../services/UserService";
-import TabBarIcon from "../components/TabBarIcon";
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -22,7 +21,9 @@ export default class ProfileScreen extends Component {
             photoUrl: null,
         };
     }
-
+    componentDidUpdate(){
+        this.getInfo()
+    }
     static navigationOptions = ({navigation}) => ({
         title: 'Profile',
         headerRight: (
@@ -186,7 +187,7 @@ export default class ProfileScreen extends Component {
                             titleStyle={{fontSize: 16, color: colors.TEXT_COLOR}}
                             rightTitle={this.state.address}
                             rightTitleStyle={{fontSize: 16}}
-                            onPress={() => navigation.navigate('LocationScreen')}
+                            onPress={() => navigation.navigate('LocationScreen',{address:this.state.address})}
                             containerStyle={styles.listItemContainer}
                             leftIcon={
                                 <BaseIcon
