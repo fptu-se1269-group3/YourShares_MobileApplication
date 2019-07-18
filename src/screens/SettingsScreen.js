@@ -102,7 +102,6 @@ export default class SettingsScreen extends Component {
                             title="Application Info"
                             titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
                             containerStyle={styles.listItemContainer}
-                            onPress={() => navigation.navigate('QRScan')}
                             rightIcon={<Chevron />}
                         />
                     </View>
