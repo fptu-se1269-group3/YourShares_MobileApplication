@@ -3,7 +3,8 @@ import {
     View,
     StyleSheet,
     ScrollView,
-    Alert
+    Alert,
+    Image
 } from 'react-native'
 import {Body, Card, CardItem, Left, Right, Text} from "native-base";
 import {getRoundByCompany} from "../services/RoundServices";
@@ -78,6 +79,37 @@ export default class CompanyDetailScreen extends Component {
         }
     };
 
+    // _extractRoundsForChart = (rounds) => {
+    //     const name = rounds.map(r => r.name);
+    //     const time = rounds.map(r => r.roundDate);
+    //     const value = rounds.map(r => r.moneyRaised);
+    //     return {
+    //         time,
+    //         value,
+    //         name,
+    //     }
+    // };
+    //
+    // _renderRoundsImage = () => {
+    //     if (this.state.rounds !== undefined && this.state.rounds.length > 0) {
+    //         return (
+    //             <Image
+    //                 source={{
+    //                     uri: 'https://bar-chart-api.herokuapp.com/plot.png',
+    //                     method: 'POST',
+    //                     headers: {
+    //                         Pragma: 'no-cache',
+    //                         'Content-Type': 'application/json',
+    //                         Accept: 'image/png'
+    //                     },
+    //                     body: JSON.stringify(this._extractRoundsForChart(this.state.rounds)),
+    //                 }}
+    //                 style={{width: 400, height: 200}}
+    //             />
+    //         )
+    //     }
+    // };
+
     render() {
         return (
             <ScrollView>
@@ -103,7 +135,7 @@ export default class CompanyDetailScreen extends Component {
                             <Text style={{textAlign: 'right'}}>{this.state.company.adminName}</Text>
                         </Right>
                     </CardItem>
-                    <CardItem bordered >
+                    <CardItem bordered>
                         <Body>
                             <Text style={styles.left}>Categories</Text>
                         </Body>
@@ -132,7 +164,11 @@ export default class CompanyDetailScreen extends Component {
                             <Text style={styles.left}>Funding Rounds</Text>
                         </Body>
                         <Right style={{flexDirection: 'row'}}>
-                            <Text style={[{flex: 1, textAlign: 'right', paddingRight: "7%"}, styles.right]}>{this.state.rounds.length}</Text>
+                            <Text style={[{
+                                flex: 1,
+                                textAlign: 'right',
+                                paddingRight: "7%"
+                            }, styles.right]}>{this.state.rounds.length}</Text>
                             <Chevron style={{flex: 1}}/>
                         </Right>
                     </CardItem>
@@ -141,7 +177,8 @@ export default class CompanyDetailScreen extends Component {
                             <Text style={styles.left}>Total Funding Amount</Text>
                         </Body>
                         <Right>
-                            <Text style={styles.right}>{this._formatCurrency(this._totalRoundAmount(this.state.rounds))}</Text>
+                            <Text
+                                style={styles.right}>{this._formatCurrency(this._totalRoundAmount(this.state.rounds))}</Text>
                         </Right>
                     </CardItem>
                     <CardItem bordered>
@@ -151,6 +188,9 @@ export default class CompanyDetailScreen extends Component {
                         </Body>
                     </CardItem>
                 </Card>
+                <ScrollView>
+                    {this._renderRoundsImage()}
+                </ScrollView>
             </ScrollView>
         );
     }

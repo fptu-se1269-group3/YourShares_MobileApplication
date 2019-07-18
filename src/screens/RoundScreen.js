@@ -5,6 +5,7 @@ import {Body, Card, CardItem, Text, Left, Right} from "native-base";
 import colors from "../values/Colors";
 import Modal from "react-native-modal";
 import {Avatar} from "react-native-elements";
+import Numeral from "numeral";
 
 export default class RoundScreen extends Component {
     static navigationOptions = {
@@ -48,6 +49,12 @@ export default class RoundScreen extends Component {
         );
     };
 
+    _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
+
+    _formatCurrency = (val) => Numeral(val).format('($ 0.[00] a)').toUpperCase();
+
+    _formatVolume = (val) => Numeral(val).format('0.[00] a').toUpperCase();
+
     _renderInvestorItem = ({item}) => {
         return (
             <Card style={{borderRadius: 10}} pointerEvents="none">
@@ -57,6 +64,9 @@ export default class RoundScreen extends Component {
                         <View style={{paddingLeft: "5%", justifyContent: 'space-between'}}>
                             <Text>
                                 {item.investorName}
+                            </Text>
+                            <Text style={{color: 'green'}}>
+                                Invested {this._formatCurrency(item.investedValue)} for {this._formatVolume(item.shareAmount)}({this._formatPercentage(item.sharesHoldingPercentage)}) shares
                             </Text>
                         </View>
                     </View>
@@ -89,6 +99,7 @@ export default class RoundScreen extends Component {
 
                 >
                     <View style={styles.content}>
+                        <Text>Round Investors</Text>
                         <FlatList keyExtractor={item => item.roundInvestorId}
                                   data={this.state.roundInvestors}
                                   renderItem={this._renderInvestorItem}
