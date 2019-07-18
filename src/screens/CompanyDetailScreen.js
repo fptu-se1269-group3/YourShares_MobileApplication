@@ -13,6 +13,7 @@ import colors from "../values/Colors";
 import {Avatar, ListItem} from "react-native-elements";
 import Chevron from "../components/Chevron";
 import Numeral from 'numeral';
+import {getChart} from "../services/ChartService";
 
 export default class CompanyDetailScreen extends Component {
     static navigationOptions = {
@@ -25,12 +26,32 @@ export default class CompanyDetailScreen extends Component {
             company: this.props.navigation.getParam('company'),
             rounds: [],
             refreshing: false,
+            chart: false
         }
     };
 
     async componentDidMount(): void {
         await this.getRounds();
+        if (this.state.rounds !== undefined && this.state.rounds.length > 0) {
+            getChart(this._extractRoundsForChart(this.state.rounds))
+                .then(response => {
+                    if (response.status === 200) {
+                        this.setState({chart: true});
+                    }
+                })
+        }
     }
+
+    _extractRoundsForChart = (rounds) => {
+        const time = rounds.map(r => r.roundDate);
+        const name = rounds.map(r => r.name);
+        const value = rounds.map(r => r.moneyRaised);
+        return {
+            time,
+            value,
+            name,
+        }
+    };
 
     getRounds = async () => {
         this.setState({refreshing: true});
@@ -78,37 +99,6 @@ export default class CompanyDetailScreen extends Component {
             navigation.push('Round', {rounds: this.state.rounds});
         }
     };
-
-    // _extractRoundsForChart = (rounds) => {
-    //     const name = rounds.map(r => r.name);
-    //     const time = rounds.map(r => r.roundDate);
-    //     const value = rounds.map(r => r.moneyRaised);
-    //     return {
-    //         time,
-    //         value,
-    //         name,
-    //     }
-    // };
-    //
-    // _renderRoundsImage = () => {
-    //     if (this.state.rounds !== undefined && this.state.rounds.length > 0) {
-    //         return (
-    //             <Image
-    //                 source={{
-    //                     uri: 'https://bar-chart-api.herokuapp.com/plot.png',
-    //                     method: 'POST',
-    //                     headers: {
-    //                         Pragma: 'no-cache',
-    //                         'Content-Type': 'application/json',
-    //                         Accept: 'image/png'
-    //                     },
-    //                     body: JSON.stringify(this._extractRoundsForChart(this.state.rounds)),
-    //                 }}
-    //                 style={{width: 400, height: 200}}
-    //             />
-    //         )
-    //     }
-    // };
 
     render() {
         return (
@@ -188,9 +178,21 @@ export default class CompanyDetailScreen extends Component {
                         </Body>
                     </CardItem>
                 </Card>
-                <ScrollView>
-                    {this._renderRoundsImage()}
-                </ScrollView>
+                { this.state.chart &&
+                <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold'}}>
+                    Rounds funding summary
+                </Text>}
+                { this.state.chart &&
+                    <ScrollView style={styles.chart} horizontal={true}>
+                        <Image
+                            source={{uri: 'https://bar-chart-api.herokuapp.com/plot.png'}}
+                            style={{width: 600, height: 500}}
+                            resizeMode={'contain'}
+                            resizeMethod={'resize'}
+
+                        />
+                    </ScrollView>
+                }
             </ScrollView>
         );
     }
@@ -205,4 +207,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.TEXT_LINK
     },
+    chart: {
+
+    }
 });

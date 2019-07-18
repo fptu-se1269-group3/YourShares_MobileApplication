@@ -1,8 +1,8 @@
-const API = "https://bar-chart-api.herokuapp.com/plot.png";
+const API = "https://bar-chart-api.herokuapp.com/";
 
 export function getChart(data) {
     return fetch(API, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
