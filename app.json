@@ -29,6 +29,9 @@
     },
     "android": {
       "package": "com.fptu.yourshares",
+      "googleSignIn": {
+      	"apiKey": "754455661839-tp5m1cm512dfq8kj6vrm61u6l5mr7b0j.apps.googleusercontent.com"
+      },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
