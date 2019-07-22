@@ -59,6 +59,9 @@ export default class RoundScreen extends Component {
 
     _formatVolume = (val) => Numeral(val).format('0.[00] a').toUpperCase();
 
+    // from unix timestamp
+    _formatDate = (val) => moment.unix(val).format('MMM. DD YYYY');
+
     _renderInvestorItem = ({item}) => {
         return (
             <Card style={{borderRadius: 10}} pointerEvents="none">
@@ -78,8 +81,6 @@ export default class RoundScreen extends Component {
             </Card>
         );
     };
-
-    _formatDate = (val) => moment(val).format('MMM. DD YYYY');
 
     _hideModal = () => {
         this.setState({isModalVisible: false})
