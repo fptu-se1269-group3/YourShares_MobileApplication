@@ -52,7 +52,7 @@ export default class TransactionsOutTab extends Component {
     // from unix timestamp
     _formatDate = (val) => moment.unix(val).format('MMM. DD YYYY');
 
-    _formatCurrency = (val) => Numeral(val).format('($ 0,0.[00] )');
+    _formatCurrency = (val) => Numeral(val).format('($0,0.[00] )');
 
     _renderItem = ({item}) => {
         return (

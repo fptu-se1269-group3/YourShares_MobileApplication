@@ -91,7 +91,7 @@ export default class CompanyDetailScreen extends Component {
         }
     };
 
-    _formatCurrency = (val) => Numeral(val).format('($ 0.[00] a)').toUpperCase();
+    _formatCurrency = (val) => Numeral(val).format('($0.[00] a)').toUpperCase();
 
     _formatVolume = (val) => Numeral(val).format('0.[00] a').toUpperCase();
 

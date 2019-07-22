@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Button, FlatList, StyleSheet} from "react-native";
+import {View, Button, FlatList, StyleSheet, ToastAndroid} from "react-native";
 import moment from "moment";
 import {Body, Card, CardItem, Text, Left, Right} from "native-base";
 import colors from "../values/Colors";
@@ -16,6 +16,7 @@ export default class RoundScreen extends Component {
         super(props);
         this.state = {
             rounds: props.navigation.getParam('rounds'),
+            selectedRound: '',
             roundInvestors: [],
             isModalVisible: false,
         }
@@ -27,8 +28,11 @@ export default class RoundScreen extends Component {
                 <CardItem bordered style={{borderWidth: 1}} button
                           onPress={() => {
                               if (item.roundInvestors.length > 0) {
+                                  this.setState({selectedRound: item.name});
                                   this.setState({roundInvestors: item.roundInvestors});
                                   this.setState({isModalVisible: true});
+                              } else {
+                                  ToastAndroid.show('No individual investors', ToastAndroid.LONG);
                               }
                           }}>
                     <Body style={{alignItems: 'space-between'}}>
@@ -51,7 +55,7 @@ export default class RoundScreen extends Component {
 
     _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
 
-    _formatCurrency = (val) => Numeral(val).format('($ 0.[00] a)').toUpperCase();
+    _formatCurrency = (val) => Numeral(val).format('($0.[00] a)').toUpperCase();
 
     _formatVolume = (val) => Numeral(val).format('0.[00] a').toUpperCase();
 
@@ -99,7 +103,7 @@ export default class RoundScreen extends Component {
 
                 >
                     <View style={styles.content}>
-                        <Text>Round Investors</Text>
+                        <Text style={{marginTop: 5, marginBottom: 5, fontWeight: 'bold'}}>{this.state.selectedRound} investors</Text>
                         <FlatList keyExtractor={item => item.roundInvestorId}
                                   data={this.state.roundInvestors}
                                   renderItem={this._renderInvestorItem}
