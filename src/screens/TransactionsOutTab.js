@@ -71,7 +71,8 @@ export default class TransactionsOutTab extends Component {
                                 {item.transactionStatusCode === 'CMP' ? "Completed" :
                                     item.transactionStatusCode === 'RJ' ? "Rejected" : "Pending"}
                             </Text>
-                            <Text style={{alignSelf: 'flex-end', flex: 1, textAlign: 'right'}}>
+                            <Text style={{alignSelf: 'flex-end', flex: 1, textAlign: 'right',
+                                textDecorationLine: item.transactionStatusCode === 'RJ' ? 'line-through' : 'none'}}>
                                 {this._formatCurrency(item.transactionValue)}
                             </Text>
                         </View>
@@ -80,6 +81,7 @@ export default class TransactionsOutTab extends Component {
                                 {item.message}
                             </Text>
                             <Text style={{textAlign: 'right', flex: 1, alignSelf: 'flex-end',
+                                textDecorationLine: item.transactionStatusCode === 'RJ' ? 'line-through' : 'none',
                                 color: item.transactionTypeCode === 'IN' ? "green" : "red"}}>
                                 {item.transactionTypeCode === 'IN' ? "+" : "-"}{item.transactionAmount}
                             </Text>
