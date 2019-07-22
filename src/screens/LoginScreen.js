@@ -16,7 +16,6 @@ import {
     StyleSheet,
     View,
     Button,
-    Dimensions
 } from 'react-native';
 import {Spinner} from "native-base";
 import {createProfileOAuth, loginWithEmail, loginWithOAuth} from "../services/AuthenticationService";
@@ -49,7 +48,7 @@ export default class LoginScreen extends Component {
 
     async handleFingerprint() {
         if (global["isfingersprintAuth"] == "1") {
-            var hashHardware = await LocalAuthentication.authenticateAsync()
+            const hashHardware = await LocalAuthentication.authenticateAsync();
             if (hashHardware.success) {
                 this.props.navigation.navigate('Main')
             } else {

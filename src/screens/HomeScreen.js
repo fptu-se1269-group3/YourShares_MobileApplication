@@ -12,6 +12,7 @@ import {
     FlatList,
     StatusBar,
     View,
+    SafeAreaView
 } from 'react-native';
 import colors from "../values/Colors";
 import {searchCompany} from "../services/CompanyService";
@@ -94,7 +95,7 @@ export default class HomeScreen extends Component {
         this.setState({companies});
     }
 
-    _formatPercentage = (val) => Numeral(val/100).format('0.[000]%');
+    _formatPercentage = (val) => Numeral(val / 100).format('0.[000]%');
 
     // from datetime string
     _formatDate = (val) => moment(val).format('MMM. DD YYYY');
@@ -191,13 +192,10 @@ export default class HomeScreen extends Component {
     };
 
     render() {
+        const height = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
         return (
             <View style={styles.container}>
-                {Platform.OS === 'ios' &&
-                <View style={{height: 20, backgroundColor: "#007FFA"}}>
-                    <StatusBar translucent backgroundColor={{backgroundColor: "#007FFA"}} barStyle={"light-content"}/>
-                </View>
-                }
+                <View style={{backgroundColor: colors.STATUS_BAR_DARK_BLUE, height: height}}/>
                 <SearchBar
                     platform={Platform.OS === 'ios' ? "ios" : "android"}
                     placeholder={"Search company ..."}

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {ListItem, Text} from "react-native-elements";
 import {SafeAreaView} from "react-navigation";
-import {ScrollView, StyleSheet, View, Platform} from 'react-native';
+import {ScrollView, StyleSheet, View, Platform, StatusBar} from 'react-native';
 import {Icon, Picker, Header, Tab, Tabs, TabHeading} from "native-base";
 import DatePicker from 'react-native-datepicker';
 import Tab1 from './TransactionsAllTab';

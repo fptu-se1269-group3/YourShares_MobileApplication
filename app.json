@@ -36,11 +36,6 @@
         "USE_FINGERPRINT",
         "VIBRATE"
       ]
-    },
-    "androidStatusBarColor": "#007FFA",
-    "androidStatusBar": {
-      "barStyle": "light-content",
-      "backgroundColor": "#007FFA"
     }
   }
 }
