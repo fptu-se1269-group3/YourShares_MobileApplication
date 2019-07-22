@@ -108,7 +108,7 @@ export default class CompanyDetailScreen extends Component {
     render() {
         const images = [{
             source: {
-                uri: 'https://bar-chart-api.herokuapp.com/plot.png'
+                uri: `https://bar-chart-api.herokuapp.com/plot.png?d=${new Date()}`
             },
             title: 'Rounds funding analysis',
             width: 800,
@@ -203,7 +203,7 @@ export default class CompanyDetailScreen extends Component {
                 <TouchableHighlight onPress={() => this.setState({isVisible: true})}>
                     <View>
                         <Image
-                            source={{uri: 'https://bar-chart-api.herokuapp.com/plot.png'}}
+                            source={{uri: `https://bar-chart-api.herokuapp.com/plot.png?d=${new Date()}`}}
                             style={{width: imgWidth, height: imgHeight}}
                             resizeMode={'contain'}
                             resizeMethod={'resize'}
