@@ -4,7 +4,8 @@ import {
     StyleSheet,
     ScrollView,
     Alert,
-    Image
+    Image,
+    TouchableHighlight
 } from 'react-native'
 import {Body, Card, CardItem, Left, Right, Text} from "native-base";
 import {getRoundByCompany} from "../services/RoundServices";
@@ -14,6 +15,8 @@ import {Avatar, ListItem} from "react-native-elements";
 import Chevron from "../components/Chevron";
 import Numeral from 'numeral';
 import {getChart} from "../services/ChartService";
+import ImageView from "react-native-image-view";
+import layout from '../values/Layout'
 
 export default class CompanyDetailScreen extends Component {
     static navigationOptions = {
@@ -26,7 +29,8 @@ export default class CompanyDetailScreen extends Component {
             company: this.props.navigation.getParam('company'),
             rounds: [],
             refreshing: false,
-            chart: false
+            chart: false,
+            isVisible: false
         }
     };
 
@@ -101,6 +105,18 @@ export default class CompanyDetailScreen extends Component {
     };
 
     render() {
+        const images = [{
+            source: {
+                uri: 'https://bar-chart-api.herokuapp.com/plot.png'
+            },
+            title: 'Rounds funding analysis',
+            width: 800,
+            height: 500,
+            resizeMode: 'contain',
+            resizeMethod: 'resize'
+        }];
+        const imgWidth = layout.window.width;
+        const imgHeight = imgWidth / 16 * 10;
         return (
             <ScrollView>
                 <Card>
@@ -178,20 +194,26 @@ export default class CompanyDetailScreen extends Component {
                         </Body>
                     </CardItem>
                 </Card>
-                { this.state.chart &&
+                {this.state.chart &&
                 <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold'}}>
                     Rounds funding summary
                 </Text>}
-                { this.state.chart &&
-                    <ScrollView style={styles.chart} horizontal={true}>
+                {this.state.chart &&
+                <TouchableHighlight onPress={() => this.setState({isVisible: true})}>
+                    <View>
                         <Image
                             source={{uri: 'https://bar-chart-api.herokuapp.com/plot.png'}}
-                            style={{width: 600, height: 500}}
+                            style={{width: imgWidth, height: imgHeight}}
                             resizeMode={'contain'}
                             resizeMethod={'resize'}
-
                         />
-                    </ScrollView>
+                        <ImageView
+                            images={images}
+                            imageIndex={0}
+                            isVisible={this.state.isVisible}
+                        />
+                    </View>
+                </TouchableHighlight>
                 }
             </ScrollView>
         );
@@ -207,7 +229,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.TEXT_LINK
     },
-    chart: {
-
-    }
+    chart: {}
 });
