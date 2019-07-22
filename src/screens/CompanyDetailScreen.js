@@ -100,7 +100,8 @@ export default class CompanyDetailScreen extends Component {
         if (this.state.rounds.length <= 0) {
             ToastAndroid.show('No rounds', ToastAndroid.SHORT);
         } else {
-            navigation.push('Round', {rounds: this.state.rounds});
+            if (!this.state.refreshing)
+                navigation.push('Round', {rounds: this.state.rounds});
         }
     };
 
@@ -229,5 +230,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.TEXT_LINK
     },
-    chart: {}
 });
