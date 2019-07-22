@@ -42,8 +42,8 @@ export default class SettingsScreen extends Component {
             });
             await this.saveData("0");
             Platform.OS === 'ios' ?
-                Alert.alert('Fingerprint authentication', 'Enabled', [{text: 'OK'}]) :
-                ToastAndroid.show("Fingerprint authentication enabled", ToastAndroid.SHORT);
+                Alert.alert('Fingerprint authentication', 'Disabled', [{text: 'OK'}]) :
+                ToastAndroid.show("Fingerprint authentication disabled", ToastAndroid.SHORT);
         } else {
             const check = await LocalAuthentication.hasHardwareAsync()
             if (check) {
@@ -52,8 +52,8 @@ export default class SettingsScreen extends Component {
                 });
                 await this.saveData("1");
                 Platform.OS === 'ios' ?
-                    Alert.alert('Fingerprint authentication', 'Disabled', [{text: 'OK'}]) :
-                    ToastAndroid.show("Fingerprint authentication disabled", ToastAndroid.SHORT);
+                    Alert.alert('Fingerprint authentication', 'Enabled', [{text: 'OK'}]) :
+                    ToastAndroid.show("Fingerprint authentication enabled", ToastAndroid.SHORT);
             } else {
                 Alert.alert('Fingerprint authentication', 'Device not support fingerprint', [{text: 'OK',}])
             }
