@@ -80,12 +80,12 @@ export default class TransactionsScreen extends Component {
                     },
                 });
                 const responseJson = await response.json();
-                if (responseJson['data'][i] !== undefined) {
-                    if (responseJson['data'][i].name === 'Standard') {
+                for (let a = 0; a < 2; a++) {
+                    if (responseJson['data'][a].name === 'Standard') {
                         this.setState({
-                            arrayShareAccount: [...this.state.arrayShareAccount, responseJson['data'][i].shareAccountId]
+                            arrayShareAccount: [...this.state.arrayShareAccount, responseJson['data'][a].shareAccountId]
                         });
-                        const response2 = await fetch('http://api.yourshares.tk/api/transactions/share-accounts/' + responseJson['data'][i].shareAccountId, {
+                        const response2 = await fetch('http://api.yourshares.tk/api/transactions/share-accounts/' + responseJson['data'][a].shareAccountId, {
                             method: 'GET',
                             headers: {
                                 Accept: 'application/json',
