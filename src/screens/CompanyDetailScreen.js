@@ -5,7 +5,7 @@ import {
     ScrollView,
     Alert,
     Image,
-    TouchableHighlight
+    TouchableHighlight, ToastAndroid
 } from 'react-native'
 import {Body, Card, CardItem, Left, Right, Text} from "native-base";
 import {getRoundByCompany} from "../services/RoundServices";
@@ -98,7 +98,7 @@ export default class CompanyDetailScreen extends Component {
     _navigateRound = () => {
         const {navigation} = this.props;
         if (this.state.rounds.length <= 0) {
-            Alert.alert('Empty', 'No rounds', [{text: 'OK'}])
+            ToastAndroid.show('No rounds', ToastAndroid.SHORT);
         } else {
             navigation.push('Round', {rounds: this.state.rounds});
         }

@@ -40,7 +40,7 @@ export default class RoundScreen extends Component {
                                 {item.name}
                             </Text>
                             <Text style={{textAlign: 'right', flex: 1, alignSelf: 'flex-end', color: 'green'}}>
-                                + {item.moneyRaised}
+                                Money raised {this._formatCurrency(item.moneyRaised)}
                             </Text>
                         </View>
                     </Body>
@@ -95,7 +95,7 @@ export default class RoundScreen extends Component {
                        onBackButtonPress={this._hideModal}
                        hasBackdrop={true}
                        onBackdropPress={this._hideModal}
-                       hideModalContentWhileAnimating={false}
+                       hideModalContentWhileAnimating={true}
 
                 >
                     <View style={styles.content}>

@@ -14,7 +14,7 @@ import {
     Image,
     StyleSheet,
     View,
-    Button,
+    Button, ToastAndroid,
 } from 'react-native';
 import {Spinner} from "native-base";
 import {registerWithEmail} from "../services/AuthenticationService";
@@ -74,22 +74,23 @@ export default class LoginScreen extends Component {
                 }
             })
             .then(json => {
-                this.setState({isLoading: true});
+                this.setState({isLoading: false});
                 if (json === undefined) {
-                    Alert.alert(
-                        'Success',
-                        'Register complete',
-                        [
-                            {text: 'LOG IN',
-                                onPress: () => this.props.navigation.navigate('Login')
-                            },
-                        ]
-                    );
+                    ToastAndroid.show('Register success', ToastAndroid.LONG);
+                    this.props.navigation.pop();
                 }
                 else if (json.ErrorMessage.toUpperCase() === 'EMAIL EXISTED') {
                     Alert.alert(
                         'Register fail',
                         'This email has been registered.',
+                        [
+                            {text: 'TRY AGAIN'}
+                        ]
+                    );
+                } else {
+                    Alert.alert(
+                        'Register fail',
+                        'Please check your input',
                         [
                             {text: 'TRY AGAIN'}
                         ]

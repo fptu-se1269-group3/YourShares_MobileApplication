@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput } from 'react-native';
+import React, {Component} from 'react';
+import {Button, ScrollView, StyleSheet, View, Switch, Platform, TextInput, ToastAndroid, Alert} from 'react-native';
 import strings from "../values/Strings";
-import { Avatar, ListItem, Text } from "react-native-elements";
+import {Avatar, ListItem, Text} from "react-native-elements";
 import InfoText from '../components/InfoText'
-import { SafeAreaView } from "react-navigation";
+import {SafeAreaView} from "react-navigation";
 import * as SecureStore from 'expo-secure-store';
 import BaseIcon from '../components/BaseIcon';
 import Chevron from '../components/Chevron';
@@ -17,6 +17,7 @@ export default class SettingsScreen extends Component {
             pushNotifications: global["isfingersprintAuth"] == "1" ? true : false
         };
     }
+
     static navigationOptions = {
         title: "Settings"
     };
@@ -38,41 +39,45 @@ export default class SettingsScreen extends Component {
         if (this.state.pushNotifications) {
             this.setState({
                 pushNotifications: false
-            })
+            });
             await this.saveData("0");
-            alert("Done");
+            Platform.OS === 'ios' ?
+                Alert.alert('Fingerprint authentication', 'Enabled', [{text: 'OK'}]) :
+                ToastAndroid.show("Fingerprint authentication enabled", ToastAndroid.SHORT);
         } else {
-            var check = await LocalAuthentication.hasHardwareAsync()
-            if(check){
+            const check = await LocalAuthentication.hasHardwareAsync()
+            if (check) {
                 this.setState({
                     pushNotifications: true
-                })
+                });
                 await this.saveData("1");
-                alert("Done");
-            }else{
-                alert("Device Not Support Fingersprint");
+                Platform.OS === 'ios' ?
+                    Alert.alert('Fingerprint authentication', 'Disabled', [{text: 'OK'}]) :
+                    ToastAndroid.show("Fingerprint authentication disabled", ToastAndroid.SHORT);
+            } else {
+                Alert.alert('Fingerprint authentication', 'Device not support fingerprint', [{text: 'OK',}])
             }
-            
+
         }
     }
 
     render() {
-        const { navigation } = this.props;
+        const {navigation} = this.props;
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.scroll}>
-                    <InfoText text="Security Account" />
+                    <InfoText text="Security Account"/>
                     <View>
                         <ListItem
                             title="Change Password"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: color.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                         <ListItem
                             hideChevron
-                            title="Fingerprint Auth"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            title="Fingerprint Authentication"
+                            titleStyle={{fontSize: 16, color: color.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
                             rightElement={
                                 <Switch
@@ -82,30 +87,30 @@ export default class SettingsScreen extends Component {
                             }
                         />
                     </View>
-                    <InfoText text="Other" />
+                    <InfoText text="Other"/>
                     <View>
                         <ListItem
                             title="Language"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
-                            rightTitleStyle={{ fontSize: 15, width: 220, textAlign: 'right' }}
+                            titleStyle={{fontSize: 16, color: color.TEXT_COLOR}}
+                            rightTitleStyle={{fontSize: 15, width: 220, textAlign: 'right'}}
                             rightTitle="English"
                             containerStyle={styles.listItemContainer}
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                         <ListItem
                             title="Notification"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: color.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                         <ListItem
                             title="Application Info"
-                            titleStyle={{ fontSize: 16, color: color.TEXT_COLOR }}
+                            titleStyle={{fontSize: 16, color: color.TEXT_COLOR}}
                             containerStyle={styles.listItemContainer}
-                            rightIcon={<Chevron />}
+                            rightIcon={<Chevron/>}
                         />
                     </View>
-                    <View style={styles.button} >
+                    <View style={styles.button}>
                         <Button
                             title={strings.LOGOUT}
                             onPress={() => navigation.navigate('Auth')}
