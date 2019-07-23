@@ -11,7 +11,7 @@ export default {
     RE_PASSWORD_REGISTER_PLACE_HOLDER: 'Re-password *',
     FIRST_NAME_REGISTER: 'First Name',
     LAST_NAME_REGISTER: 'Last Name',
-    PHONE_REGISTER: 'Phone right',
+    PHONE_REGISTER: 'Phone',
     ADDRESS_REGISTER: 'Address',
     BASE_PATH: "http://yourshares.tk/",
     FACEBOOK_APP_ID: '2475267839196769',
