@@ -17,7 +17,7 @@ import {
 import colors from "../values/Colors";
 import {searchCompany} from "../services/CompanyService";
 import {getShareholderByUser} from "../services/ShareholderService";
-import {getUserShareAccountInCompany} from "../services/ShareAccountService";
+import {getShareAccountByShareholder, getUserShareAccountInCompany} from "../services/ShareAccountService";
 
 
 export default class HomeScreen extends Component {
@@ -65,11 +65,12 @@ export default class HomeScreen extends Component {
                 })
         );
         for await (const comp of this.state.companies) {
-            await (getUserShareAccountInCompany(comp.companyId, global["userId"], global["jwt"])
+            await (getShareAccountByShareholder(comp.shareholderId, global["jwt"])
                     .then(response => response.json())
                     .then(json => {
+                        console.log(json);
                         const companies = this.state.companies.map(c => {
-                            if (c.companyId === comp.companyId) {
+                            if (c.shareholderId === comp.shareholderId) {
                                 return {
                                     ...c,
                                     shareAccounts: json.data
